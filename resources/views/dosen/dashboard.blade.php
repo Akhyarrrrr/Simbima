@@ -1,77 +1,82 @@
+@section('eyebrow', 'DASHBOARD DOSEN')
+@section('title', 'Selamat datang, '.auth()->user()->name)
+
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-col gap-1">
-            <h2 class="text-xl font-semibold leading-tight text-gray-900">Dashboard Dosen</h2>
-            <p class="text-sm text-gray-500">Kelola pengajuan masuk dan mahasiswa bimbingan aktif.</p>
-        </div>
-    </x-slot>
+    <div class="space-y-6">
+        @if (session('status'))
+            <div class="rounded-md border border-forest/20 bg-forest/10 px-4 py-3 text-sm font-medium text-forest">
+                {{ session('status') }}
+            </div>
+        @endif
 
-    <div class="py-10">
-        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-            @if (session('status'))
-                <div class="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
-                    {{ session('status') }}
-                </div>
-            @endif
+        @if ($errors->any())
+            <div class="rounded-md border border-rust/20 bg-rust/10 px-4 py-3 text-sm font-medium text-rust">
+                {{ $errors->first() }}
+            </div>
+        @endif
 
-            @if ($errors->any())
-                <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
-                    {{ $errors->first() }}
+        <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="mb-5">
+                <h3 class="font-display text-lg font-semibold text-navy">Pengajuan Masuk</h3>
+                <div class="mt-2 flex items-center gap-2">
+                    <p class="font-sans text-xs font-semibold uppercase tracking-wide text-slate">Pengajuan Masuk</p>
+                    <span class="rounded-full bg-gold/10 px-2 py-0.5 text-xs font-semibold text-gold">
+                        {{ $pendingPengajuans->count() }}
+                    </span>
                 </div>
-            @endif
+            </div>
 
-            <section class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                <div class="border-b border-gray-200 px-6 py-4">
-                    <h3 class="text-base font-semibold text-gray-900">Pengajuan Masuk</h3>
-                </div>
+            @if ($pendingPengajuans->isEmpty())
+                <p class="font-sans text-sm italic text-slate">Belum ada pengajuan masuk.</p>
+            @else
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-left text-sm">
-                        <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <table class="min-w-full border-collapse text-left text-sm">
+                        <thead class="border-b border-slate-200 bg-navy/5 text-xs font-semibold uppercase tracking-wide text-navy">
                             <tr>
-                                <th scope="col" class="px-6 py-3">Mahasiswa</th>
-                                <th scope="col" class="px-6 py-3">NIM</th>
-                                <th scope="col" class="px-6 py-3">Angkatan</th>
-                                <th scope="col" class="px-6 py-3">Bidang Minat</th>
-                                <th scope="col" class="px-6 py-3 text-right">Aksi</th>
+                                <th scope="col" class="px-4 py-3">Nama</th>
+                                <th scope="col" class="px-4 py-3">NIM</th>
+                                <th scope="col" class="px-4 py-3">Angkatan</th>
+                                <th scope="col" class="px-4 py-3">Bidang Minat</th>
+                                <th scope="col" class="px-4 py-3 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
-                            @forelse ($pendingPengajuans as $pengajuan)
-                                <tr class="hover:bg-gray-50" x-data="{ rejectOpen: false }">
-                                    <td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900">{{ $pengajuan->mahasiswa->user->name }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-gray-600">{{ $pengajuan->mahasiswa->nim }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-gray-600">{{ $pengajuan->mahasiswa->angkatan }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-gray-600">{{ $pengajuan->mahasiswa->bidangMinat->nama }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-right">
+                        <tbody class="bg-white">
+                            @foreach ($pendingPengajuans as $pengajuan)
+                                <tr class="border-b border-slate-100 last:border-b-0 hover:bg-paper/60" x-data="{ rejectOpen: false }">
+                                    <td class="whitespace-nowrap px-4 py-4 font-medium text-navy">{{ $pengajuan->mahasiswa->user->name }}</td>
+                                    <td class="whitespace-nowrap px-4 py-4 font-mono text-sm text-slate">{{ $pengajuan->mahasiswa->nim }}</td>
+                                    <td class="whitespace-nowrap px-4 py-4 text-slate">{{ $pengajuan->mahasiswa->angkatan }}</td>
+                                    <td class="whitespace-nowrap px-4 py-4 text-slate">{{ $pengajuan->mahasiswa->bidangMinat->nama }}</td>
+                                    <td class="whitespace-nowrap px-4 py-4 text-right">
                                         <div class="flex justify-end gap-2">
                                             <form method="POST" action="{{ route('dosen.pengajuan.approve', $pengajuan) }}">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="inline-flex h-10 items-center rounded-md bg-emerald-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2">
+                                                <button type="submit" class="inline-flex items-center rounded-md bg-forest px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-forest/90 focus:outline-none focus:ring-2 focus:ring-forest focus:ring-offset-2">
                                                     ACC
                                                 </button>
                                             </form>
-                                            <button type="button" x-on:click="rejectOpen = true" class="inline-flex h-10 items-center rounded-md bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2">
+                                            <button type="button" x-on:click="rejectOpen = true" class="inline-flex items-center rounded-md border border-rust px-3 py-1.5 text-sm font-semibold text-rust transition-colors hover:bg-rust hover:text-white focus:outline-none focus:ring-2 focus:ring-rust focus:ring-offset-2">
                                                 Tolak
                                             </button>
                                         </div>
 
-                                        <div class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/50 px-4" x-bind:class="{ 'hidden': !rejectOpen, 'flex': rejectOpen }" role="dialog" aria-modal="true" aria-labelledby="reject-title-{{ $pengajuan->id }}" x-on:keydown.escape.window="rejectOpen = false">
+                                        <div class="fixed inset-0 z-50 hidden items-center justify-center bg-navy/40 px-4" x-bind:class="{ 'hidden': !rejectOpen, 'flex': rejectOpen }" role="dialog" aria-modal="true" aria-labelledby="reject-title-{{ $pengajuan->id }}" x-on:keydown.escape.window="rejectOpen = false">
                                             <div x-on:click="rejectOpen = false" class="absolute inset-0"></div>
-                                            <form method="POST" action="{{ route('dosen.pengajuan.reject', $pengajuan) }}" class="relative w-full max-w-lg rounded-lg bg-white p-6 text-left shadow-xl">
+                                            <form method="POST" action="{{ route('dosen.pengajuan.reject', $pengajuan) }}" class="relative w-full max-w-lg rounded-lg bg-white p-6 text-left shadow-lg">
                                                 @csrf
                                                 @method('PATCH')
-                                                <h4 id="reject-title-{{ $pengajuan->id }}" class="text-lg font-semibold text-gray-900">Tolak Pengajuan</h4>
-                                                <p class="mt-1 text-sm text-gray-500">Berikan catatan agar mahasiswa memahami alasan penolakan.</p>
+                                                <h4 id="reject-title-{{ $pengajuan->id }}" class="font-display text-lg font-semibold text-navy">Tolak Pengajuan</h4>
+                                                <p class="mt-1 text-sm text-slate">Berikan catatan agar mahasiswa memahami alasan penolakan.</p>
                                                 <div class="mt-5">
-                                                    <x-input-label for="catatan_penolakan_{{ $pengajuan->id }}" value="Catatan Penolakan" />
-                                                    <textarea id="catatan_penolakan_{{ $pengajuan->id }}" name="catatan_penolakan" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                                                    <x-input-label for="catatan_penolakan_{{ $pengajuan->id }}" value="Catatan Penolakan" class="text-slate" />
+                                                    <textarea id="catatan_penolakan_{{ $pengajuan->id }}" name="catatan_penolakan" rows="4" required class="mt-1 block w-full rounded-md border-slate-300 text-sm text-navy shadow-sm focus:border-rust focus:ring-rust"></textarea>
                                                 </div>
                                                 <div class="mt-6 flex justify-end gap-3">
-                                                    <button type="button" x-on:click="rejectOpen = false" class="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                                                    <button type="button" x-on:click="rejectOpen = false" class="inline-flex h-10 items-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate transition-colors hover:bg-paper focus:outline-none focus:ring-2 focus:ring-slate focus:ring-offset-2">
                                                         Batal
                                                     </button>
-                                                    <button type="submit" class="inline-flex h-10 items-center rounded-md bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2">
+                                                    <button type="submit" class="inline-flex h-10 items-center rounded-md bg-rust px-4 text-sm font-semibold text-white transition-colors hover:bg-rust/90 focus:outline-none focus:ring-2 focus:ring-rust focus:ring-offset-2">
                                                         Tolak Pengajuan
                                                     </button>
                                                 </div>
@@ -79,45 +84,54 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td class="px-6 py-6 text-center text-gray-500" colspan="5">Belum ada pengajuan masuk.</td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
-            </section>
+            @endif
+        </section>
 
-            <section class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                <div class="border-b border-gray-200 px-6 py-4">
-                    <h3 class="text-base font-semibold text-gray-900">Mahasiswa Bimbingan Aktif</h3>
+        <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="mb-5">
+                <h3 class="font-display text-lg font-semibold text-navy">Mahasiswa Bimbingan Aktif</h3>
+                <div class="mt-2 flex items-center gap-2">
+                    <p class="font-sans text-xs font-semibold uppercase tracking-wide text-slate">Bimbingan Aktif</p>
+                    <span class="rounded-full bg-gold/10 px-2 py-0.5 text-xs font-semibold text-gold">
+                        {{ $activeBimbingans->count() }}
+                    </span>
                 </div>
+            </div>
+
+            @if ($activeBimbingans->isEmpty())
+                <p class="font-sans text-sm italic text-slate">Belum ada mahasiswa bimbingan aktif.</p>
+            @else
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-left text-sm">
-                        <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <table class="min-w-full border-collapse text-left text-sm">
+                        <thead class="border-b border-slate-200 bg-navy/5 text-xs font-semibold uppercase tracking-wide text-navy">
                             <tr>
-                                <th scope="col" class="px-6 py-3">Nama</th>
-                                <th scope="col" class="px-6 py-3">NIM</th>
-                                <th scope="col" class="px-6 py-3">Judul TA</th>
+                                <th scope="col" class="px-4 py-3">Nama</th>
+                                <th scope="col" class="px-4 py-3">NIM</th>
+                                <th scope="col" class="px-4 py-3">Judul TA</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
-                            @forelse ($activeBimbingans as $bimbingan)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900">{{ $bimbingan->mahasiswa->user->name }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-gray-600">{{ $bimbingan->mahasiswa->nim }}</td>
-                                    <td class="px-6 py-4 text-gray-600">{{ $bimbingan->judul_ta ?? '-' }}</td>
+                        <tbody class="bg-white">
+                            @foreach ($activeBimbingans as $bimbingan)
+                                <tr class="border-b border-slate-100 last:border-b-0 hover:bg-paper/60">
+                                    <td class="whitespace-nowrap px-4 py-4 font-medium text-navy">{{ $bimbingan->mahasiswa->user->name }}</td>
+                                    <td class="whitespace-nowrap px-4 py-4 font-mono text-sm text-slate">{{ $bimbingan->mahasiswa->nim }}</td>
+                                    <td class="px-4 py-4">
+                                        @if ($bimbingan->judul_ta)
+                                            <span class="font-display text-sm font-semibold text-navy">{{ $bimbingan->judul_ta }}</span>
+                                        @else
+                                            <span class="text-sm italic text-slate">Belum ditentukan</span>
+                                        @endif
+                                    </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td class="px-6 py-6 text-center text-gray-500" colspan="3">Belum ada mahasiswa bimbingan aktif.</td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
-            </section>
-        </div>
+            @endif
+        </section>
     </div>
 </x-app-layout>

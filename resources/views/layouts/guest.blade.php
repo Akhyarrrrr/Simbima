@@ -6,25 +6,32 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
+        <link rel="icon" type="image/svg+xml" href="{{ asset('USK-logo.svg') }}">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+    <body class="font-sans antialiased bg-paper text-navy">
+        <div class="min-h-screen lg:grid lg:grid-cols-2">
+            <aside class="hidden bg-navy lg:flex lg:items-center lg:justify-center">
+                <div class="w-full max-w-md px-12 text-center">
+                    <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-white p-1.5" aria-hidden="true">
+                        <img src="{{ asset('USK-logo.svg') }}" alt="" class="h-14 w-auto">
+                    </div>
+                    <a href="/" class="text-4xl font-semibold tracking-wide text-white font-display">
+                        SIMBIMA
+                    </a>
+                    <div class="w-32 h-px mx-auto my-6 bg-gold"></div>
+                    <p class="text-sm leading-6 text-slate-300">
+                        Sistem Bimbingan Mahasiswa Akhir
+                    </p>
+                </div>
+            </aside>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
+            <main class="flex items-center justify-center min-h-screen px-6 py-12 bg-paper lg:min-h-0">
+                <div class="w-full max-w-[400px] rounded-lg border border-slate-200 bg-white px-6 py-7 shadow-sm">
+                    {{ $slot }}
+                </div>
+            </main>
         </div>
     </body>
 </html>

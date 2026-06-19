@@ -1,17 +1,24 @@
+@section('eyebrow', 'MANAJEMEN MAHASISWA')
+@section('title', 'Tambah Mahasiswa')
+
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Tambah Mahasiswa</h2>
-    </x-slot>
+    <div class="mx-auto max-w-lg">
+        <form method="POST" action="{{ route('admin.mahasiswa.store') }}" class="space-y-5 rounded-lg border border-slate-200 bg-white p-6">
+            @csrf
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <form method="POST" action="{{ route('admin.mahasiswa.store') }}" class="bg-white p-6 shadow-sm sm:rounded-lg space-y-4">
-                @csrf
+            <div>
+                <h3 class="font-display text-lg font-semibold text-navy">Data Mahasiswa</h3>
+                <p class="mt-1 text-sm text-slate">Buat akun mahasiswa dan data akademiknya.</p>
+            </div>
 
-                @include('admin.mahasiswas.form', ['mahasiswa' => null])
+            @include('admin.mahasiswas.form', ['mahasiswa' => null])
 
-                <x-primary-button>Simpan</x-primary-button>
-            </form>
-        </div>
+            <div class="flex justify-end gap-3 border-t border-slate-200 pt-5">
+                <a href="{{ route('admin.mahasiswa.index') }}" class="inline-flex items-center rounded-md px-4 py-2 text-sm font-semibold text-slate transition-colors hover:text-navy focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">Batal</a>
+                <button type="submit" class="inline-flex items-center rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                    Simpan
+                </button>
+            </div>
+        </form>
     </div>
 </x-app-layout>
