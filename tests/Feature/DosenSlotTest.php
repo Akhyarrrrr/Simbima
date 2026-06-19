@@ -15,7 +15,7 @@ class DosenSlotTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_sisa_slot_counts_active_bimbingans_for_matching_angkatan(): void
+    public function test_sisa_slot_only_counts_active_dospem1_bimbingans_for_matching_angkatan(): void
     {
         $bidangMinat = BidangMinat::create(['nama' => 'Rekayasa Perangkat Lunak']);
         $dosen = $this->createDosen($bidangMinat);
@@ -58,7 +58,7 @@ class DosenSlotTest extends TestCase
             'status' => 'aktif',
         ]);
 
-        $this->assertSame(1, $dosen->sisaSlot(2022));
+        $this->assertSame(2, $dosen->sisaSlot(2022));
     }
 
     private function createDosen(BidangMinat $bidangMinat): Dosen

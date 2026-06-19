@@ -52,10 +52,7 @@ class Dosen extends Model
 
         $bimbinganAktif = Bimbingan::query()
             ->where('status', 'aktif')
-            ->where(function ($query) {
-                $query->where('dospem1_id', $this->id)
-                    ->orWhere('dospem2_id', $this->id);
-            })
+            ->where('dospem1_id', $this->id)
             ->whereHas('mahasiswa', function ($query) use ($angkatan) {
                 $query->where('angkatan', $angkatan);
             })
