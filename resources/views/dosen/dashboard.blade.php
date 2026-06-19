@@ -105,45 +105,107 @@
             @if ($activeBimbingans->isEmpty())
                 <p class="font-sans text-sm italic text-slate">Belum ada mahasiswa bimbingan aktif.</p>
             @else
-                <div class="overflow-x-auto">
-                    <table class="min-w-full border-collapse text-left text-sm">
-                        <thead class="border-b border-slate-200 bg-navy/5 text-xs font-semibold uppercase tracking-wide text-navy">
-                            <tr>
-                                <th scope="col" class="px-4 py-3">Nama</th>
-                                <th scope="col" class="px-4 py-3">NIM</th>
-                                <th scope="col" class="px-4 py-3">Judul TA</th>
-                                <th scope="col" class="px-4 py-3 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white">
-                            @foreach ($activeBimbingans as $bimbingan)
-                                <tr class="border-b border-slate-100 last:border-b-0 hover:bg-paper/60">
-                                    <td class="whitespace-nowrap px-4 py-4 font-medium text-navy">{{ $bimbingan->mahasiswa->user->name }}</td>
-                                    <td class="whitespace-nowrap px-4 py-4 font-mono text-sm text-slate">{{ $bimbingan->mahasiswa->nim }}</td>
-                                    <td class="px-4 py-4">
+                <div class="space-y-4">
+                    @foreach ($activeBimbingans as $bimbingan)
+                        @php
+                            $isDospem1 = $bimbingan->dospem1_id === $dosen->id;
+                        @endphp
+
+                        <article x-data="{ open: false }" class="overflow-hidden rounded-lg border border-slate-200 bg-white">
+                            <div class="grid gap-4 bg-paper/60 px-4 py-4 lg:grid-cols-[1fr_auto] lg:items-center">
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <h4 class="font-display text-base font-semibold text-navy">{{ $bimbingan->mahasiswa->user->name }}</h4>
+                                        <span class="rounded-full border {{ $isDospem1 ? 'border-forest/30 bg-forest/10 text-forest' : 'border-gold/40 bg-gold/10 text-gold' }} px-2 py-0.5 text-xs font-semibold uppercase tracking-wide">
+                                            {{ $isDospem1 ? 'Dospem 1' : 'Dospem 2' }}
+                                        </span>
+                                    </div>
+                                    <p class="mt-1 font-mono text-xs text-slate">{{ $bimbingan->mahasiswa->nim }}</p>
+                                    <p class="mt-2 text-sm text-slate">
                                         @if ($bimbingan->judul_ta)
-                                            <span class="font-display text-sm font-semibold text-navy">{{ $bimbingan->judul_ta }}</span>
+                                            <span class="font-display font-semibold text-navy">{{ $bimbingan->judul_ta }}</span>
                                         @else
-                                            <span class="text-sm italic text-slate">Belum ditentukan</span>
+                                            <span class="italic">Judul TA belum ditentukan</span>
                                         @endif
-                                    </td>
-                                    <td class="whitespace-nowrap px-4 py-4 text-right">
-                                        @if ($bimbingan->dospem1_id === $dosen->id)
-                                            <form method="POST" action="{{ route('dosen.bimbingan.selesai', $bimbingan) }}" onsubmit="return confirm('Tandai bimbingan ini sebagai selesai?')">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="inline-flex items-center rounded-md border border-forest px-3 py-1.5 text-sm font-semibold text-forest transition-colors hover:bg-forest hover:text-white focus:outline-none focus:ring-2 focus:ring-forest focus:ring-offset-2">
-                                                    Tandai Selesai
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-2 lg:justify-end">
+                                    <button type="button" x-on:click="open = !open" class="inline-flex items-center rounded-md border border-navy px-3 py-1.5 text-sm font-semibold text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                                        <span x-text="open ? 'Tutup Detail' : 'Buka Detail'"></span>
+                                    </button>
+
+                                    @if ($isDospem1)
+                                        <form method="POST" action="{{ route('dosen.bimbingan.selesai', $bimbingan) }}" onsubmit="return confirm('Tandai bimbingan ini sebagai selesai?')">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="inline-flex items-center rounded-md border border-forest px-3 py-1.5 text-sm font-semibold text-forest transition-colors hover:bg-forest hover:text-white focus:outline-none focus:ring-2 focus:ring-forest focus:ring-offset-2">
+                                                Tandai Selesai
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div x-show="open" x-cloak class="space-y-6 border-t border-slate-200 px-4 py-5">
+                                <div>
+                                    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                                        <div>
+                                            <p class="text-xs font-semibold uppercase tracking-wide text-slate">Status Kesiapan</p>
+                                            <h5 class="mt-1 font-display text-lg font-semibold text-navy">Sempro, Semhas, Sidang</h5>
+                                        </div>
+                                        @if (! $isDospem1)
+                                            <p class="text-xs italic text-slate">Hanya pembimbing 1 yang dapat mengubah status ini.</p>
+                                        @endif
+                                    </div>
+
+                                    <div class="mt-4">
+                                        @include('partials.readiness-badges', ['bimbingan' => $bimbingan])
+                                    </div>
+
+                                    @if ($isDospem1)
+                                        <form method="POST" action="{{ route('dosen.bimbingan.status.update', $bimbingan) }}" class="mt-4 rounded-lg border border-slate-200 bg-paper/50 p-4">
+                                            @csrf
+                                            @method('PATCH')
+
+                                            <input type="hidden" name="boleh_sempro" value="0">
+                                            <input type="hidden" name="boleh_semhas" value="0">
+                                            <input type="hidden" name="boleh_sidang" value="0">
+
+                                            <div class="grid gap-3 sm:grid-cols-3">
+                                                <label class="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-navy">
+                                                    <input type="checkbox" name="boleh_sempro" value="1" @checked($bimbingan->boleh_sempro) class="rounded border-slate-300 text-forest focus:ring-forest">
+                                                    Boleh Sempro
+                                                </label>
+                                                <label class="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-navy">
+                                                    <input type="checkbox" name="boleh_semhas" value="1" @checked($bimbingan->boleh_semhas) class="rounded border-slate-300 text-forest focus:ring-forest">
+                                                    Boleh Semhas
+                                                </label>
+                                                <label class="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-navy">
+                                                    <input type="checkbox" name="boleh_sidang" value="1" @checked($bimbingan->boleh_sidang) class="rounded border-slate-300 text-forest focus:ring-forest">
+                                                    Boleh Sidang
+                                                </label>
+                                            </div>
+
+                                            <div class="mt-4 flex justify-end">
+                                                <button type="submit" class="inline-flex h-10 items-center rounded-md bg-navy px-4 text-sm font-semibold text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                                                    Simpan Status
                                                 </button>
-                                            </form>
-                                        @else
-                                            <span class="text-sm italic text-slate">-</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                            </div>
+                                        </form>
+                                    @endif
+                                </div>
+
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-slate">Log Bimbingan</p>
+                                    <h5 class="mt-1 font-display text-lg font-semibold text-navy">Catatan Bimbingan</h5>
+                                    <div class="mt-4">
+                                        @include('partials.catatan-bimbingan', ['bimbingan' => $bimbingan])
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    @endforeach
                 </div>
             @endif
         </section>

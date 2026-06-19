@@ -43,7 +43,13 @@
                                 <td class="whitespace-nowrap px-6 py-4 font-medium text-navy">{{ $mahasiswa->user->name }}</td>
                                 <td class="whitespace-nowrap px-6 py-4 font-mono text-sm text-slate">{{ $mahasiswa->nim }}</td>
                                 <td class="whitespace-nowrap px-6 py-4 text-slate">{{ $mahasiswa->angkatan }}</td>
-                                <td class="whitespace-nowrap px-6 py-4 text-slate">{{ $mahasiswa->bidangMinat->nama }}</td>
+                                <td class="whitespace-nowrap px-6 py-4">
+                                    @if ($mahasiswa->bidangMinat)
+                                        <span class="text-slate">{{ $mahasiswa->bidangMinat->nama }}</span>
+                                    @else
+                                        <span class="rounded-full border border-gold/50 bg-gold/10 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-gold">Belum dipilih</span>
+                                    @endif
+                                </td>
                                 <td class="whitespace-nowrap px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2">
                                         <a class="inline-flex items-center rounded-md border border-navy px-3 py-1.5 text-sm font-semibold text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2" href="{{ route('admin.mahasiswa.show', $mahasiswa) }}">Detail</a>

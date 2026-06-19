@@ -6,12 +6,16 @@ use App\Http\Controllers\Admin\MahasiswaController as AdminMahasiswaController;
 use App\Http\Controllers\Admin\MahasiswaImportController as AdminMahasiswaImportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Dosen\BimbinganController as DosenBimbinganController;
+use App\Http\Controllers\Dosen\BimbinganStatusController as DosenBimbinganStatusController;
 use App\Http\Controllers\Dosen\DashboardController as DosenDashboardController;
 use App\Http\Controllers\Dosen\PengajuanController as DosenPengajuanController;
 use App\Http\Controllers\Mahasiswa\BimbinganController as MahasiswaBimbinganController;
+use App\Http\Controllers\Mahasiswa\BidangMinatController as MahasiswaBidangMinatController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\PengajuanController as MahasiswaPengajuanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CatatanBimbinganController;
+use App\Http\Controllers\StatistikDosenController;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureDosen;
 use App\Http\Middleware\EnsureMahasiswa;
@@ -39,6 +43,8 @@ Route::middleware('auth')->group(function () {
 
         return back();
     })->name('notifications.mark-all-read');
+    Route::post('/bimbingan/{id}/catatan', [CatatanBimbinganController::class, 'store'])->name('bimbingan.catatan.store');
+    Route::get('/statistik/dosen', [StatistikDosenController::class, 'index'])->name('statistik.dosen');
 });
 
 Route::middleware(['auth', EnsureMahasiswa::class])
@@ -46,6 +52,7 @@ Route::middleware(['auth', EnsureMahasiswa::class])
     ->name('mahasiswa.')
     ->group(function () {
         Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('dashboard');
+        Route::patch('/bidang-minat', [MahasiswaBidangMinatController::class, 'update'])->name('bidang-minat.update');
         Route::post('/pengajuan', [MahasiswaPengajuanController::class, 'store'])->name('pengajuan.store');
         Route::delete('/pengajuan/{id}', [MahasiswaPengajuanController::class, 'destroy'])->name('pengajuan.destroy');
         Route::patch('/bimbingan/{id}', [MahasiswaBimbinganController::class, 'update'])->name('bimbingan.update');
@@ -59,6 +66,7 @@ Route::middleware(['auth', EnsureDosen::class])
         Route::patch('/pengajuan/{id}/approve', [DosenPengajuanController::class, 'approve'])->name('pengajuan.approve');
         Route::patch('/pengajuan/{id}/reject', [DosenPengajuanController::class, 'reject'])->name('pengajuan.reject');
         Route::patch('/bimbingan/{id}/selesai', [DosenBimbinganController::class, 'markSelesai'])->name('bimbingan.selesai');
+        Route::patch('/bimbingan/{id}/status', [DosenBimbinganStatusController::class, 'update'])->name('bimbingan.status.update');
     });
 
 Route::middleware(['auth', EnsureAdmin::class])

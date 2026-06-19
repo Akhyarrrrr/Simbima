@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
+use App\Models\BidangMinat;
 use App\Models\Bimbingan;
 use App\Models\Dosen;
 use App\Models\PengajuanBimbingan;
@@ -18,16 +19,29 @@ class DashboardController extends Controller
             ->with('bidangMinat')
             ->firstOrFail();
 
-        $dosens = Dosen::query()
-            ->with(['user', 'bidangMinat'])
-            ->where('bidang_minat_id', $mahasiswa->bidang_minat_id)
-            ->orderBy('nip')
-            ->get()
-            ->map(function (Dosen $dosen) use ($mahasiswa) {
-                $dosen->sisa_slot = $dosen->sisaSlot($mahasiswa->angkatan);
+        $bidangMinats = BidangMinat::query()
+            ->withCount('dosens')
+            ->orderBy('nama')
+            ->get();
 
-                return $dosen;
-            });
+        $dosens = collect();
+
+        if ($mahasiswa->bidang_minat_id) {
+            $dosens = Dosen::query()
+                ->with([
+                    'user',
+                    'bidangMinat',
+                    'dosenSlots' => fn ($query) => $query->where('angkatan', $mahasiswa->angkatan),
+                ])
+                ->where('bidang_minat_id', $mahasiswa->bidang_minat_id)
+                ->orderBy('nip')
+                ->get()
+                ->map(function (Dosen $dosen) use ($mahasiswa) {
+                    $dosen->sisa_slot = $dosen->sisaSlot($mahasiswa->angkatan);
+
+                    return $dosen;
+                });
+        }
 
         $allDosens = Dosen::query()
             ->with('user')
@@ -42,13 +56,13 @@ class DashboardController extends Controller
             ->first();
 
         $bimbingan = Bimbingan::query()
-            ->with(['dospem1.user', 'dospem2.user'])
+            ->with(['dospem1.user', 'dospem2.user', 'catatans.user'])
             ->where('mahasiswa_id', $mahasiswa->id)
             ->where('status', 'aktif')
             ->first();
 
         $bimbinganProgres = Bimbingan::query()
-            ->with(['dospem1.user', 'dospem2.user'])
+            ->with(['dospem1.user', 'dospem2.user', 'catatans.user'])
             ->where('mahasiswa_id', $mahasiswa->id)
             ->latest()
             ->first();
@@ -60,6 +74,6 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        return view('mahasiswa.dashboard', compact('mahasiswa', 'dosens', 'allDosens', 'pengajuanAktif', 'bimbingan', 'bimbinganProgres', 'riwayatDitolak'));
+        return view('mahasiswa.dashboard', compact('mahasiswa', 'bidangMinats', 'dosens', 'allDosens', 'pengajuanAktif', 'bimbingan', 'bimbinganProgres', 'riwayatDitolak'));
     }
 }

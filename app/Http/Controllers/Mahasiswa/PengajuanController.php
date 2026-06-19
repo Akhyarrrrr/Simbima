@@ -21,6 +21,12 @@ class PengajuanController extends Controller
         $mahasiswa = $request->user()->mahasiswa()->firstOrFail();
         $dosen = Dosen::findOrFail($validated['dosen_id']);
 
+        if (! $mahasiswa->bidang_minat_id) {
+            throw ValidationException::withMessages([
+                'dosen_id' => 'Pilih bidang minat terlebih dahulu sebelum mengajukan dosen pembimbing.',
+            ]);
+        }
+
         if ($mahasiswa->pengajuanBimbingans()->where('status', 'pending')->exists()) {
             throw ValidationException::withMessages([
                 'dosen_id' => 'Anda masih memiliki pengajuan bimbingan yang menunggu persetujuan.',

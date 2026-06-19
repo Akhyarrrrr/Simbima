@@ -22,7 +22,7 @@ class DashboardController extends Controller
             ->get();
 
         $activeBimbingans = Bimbingan::query()
-            ->with('mahasiswa.user')
+            ->with(['mahasiswa.user', 'dospem1.user', 'dospem2.user', 'catatans.user'])
             ->where('status', 'aktif')
             ->where(function ($query) use ($dosen) {
                 $query->where('dospem1_id', $dosen->id)

@@ -22,7 +22,7 @@
             </div>
         </section>
 
-        <section class="grid gap-4 md:grid-cols-2">
+        <section class="grid gap-4 md:grid-cols-3">
             <a href="/admin/dosen" class="group rounded-lg bg-navy p-6 text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
                 <div class="flex items-center justify-between gap-4">
                     <div>
@@ -40,6 +40,18 @@
                     <div>
                         <h3 class="font-display text-lg font-semibold">Kelola Mahasiswa</h3>
                         <p class="mt-1 text-sm text-slate-200">Atur data mahasiswa dan bidang minat.</p>
+                    </div>
+                    <svg class="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+                    </svg>
+                </div>
+            </a>
+
+            <a href="{{ route('statistik.dosen') }}" class="group rounded-lg bg-navy p-6 text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-display text-lg font-semibold">Statistik Dosen</h3>
+                        <p class="mt-1 text-sm text-slate-200">Lihat distribusi beban bimbingan dosen.</p>
                     </div>
                     <svg class="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />

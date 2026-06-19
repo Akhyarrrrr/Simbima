@@ -3,30 +3,39 @@
 
 <x-app-layout>
     @php
+        $hasBidangMinat = (bool) $mahasiswa->bidang_minat_id;
         $currentStage = 0;
 
-        if ($pengajuanAktif) {
+        if ($hasBidangMinat) {
             $currentStage = 1;
         }
 
+        if ($pengajuanAktif) {
+            $currentStage = 2;
+        }
+
         if ($bimbinganProgres && $bimbinganProgres->status === 'aktif') {
-            $currentStage = 3;
+            $currentStage = 4;
         }
 
         if ($bimbinganProgres && $bimbinganProgres->status === 'selesai') {
-            $currentStage = 4;
+            $currentStage = 5;
         }
 
         $stages = [
             [
+                'label' => 'Pilih Minat',
+                'detail' => $hasBidangMinat ? $mahasiswa->bidangMinat->nama : 'Tentukan bidang minat terlebih dahulu',
+            ],
+            [
                 'label' => 'Pengajuan',
                 'detail' => $pengajuanAktif
                     ? 'Menunggu persetujuan '.$pengajuanAktif->dosen->user->name
-                    : ($currentStage > 1 ? 'Pengajuan telah diterima' : 'Belum ada pengajuan aktif'),
+                    : ($currentStage > 2 ? 'Pengajuan telah diproses' : 'Pilih dosen pembimbing sesuai minat'),
             ],
             [
                 'label' => 'Diterima',
-                'detail' => $currentStage >= 2 ? 'Dosen pembimbing utama telah ditetapkan' : 'Menunggu keputusan dosen',
+                'detail' => $currentStage >= 3 ? 'Dosen pembimbing utama telah ditetapkan' : 'Menunggu keputusan dosen',
             ],
             [
                 'label' => 'Bimbingan Aktif',
@@ -36,7 +45,7 @@
             ],
             [
                 'label' => 'Selesai',
-                'detail' => $currentStage === 4 ? 'Bimbingan tugas akhir selesai' : 'Tahap akhir belum tercapai',
+                'detail' => $currentStage === 5 ? 'Bimbingan tugas akhir selesai' : 'Tahap akhir belum tercapai',
             ],
         ];
     @endphp
@@ -54,68 +63,124 @@
             </div>
         @endif
 
-        <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div class="border-b border-gold/30 px-6 py-4">
-                <h3 class="font-display text-lg font-semibold text-navy">Informasi Mahasiswa</h3>
+        <section class="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+            <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div class="flex flex-col gap-4 border-b border-gold/30 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate">Profil Akademik</p>
+                        <h3 class="mt-1 font-display text-xl font-semibold text-navy">Informasi Mahasiswa</h3>
+                    </div>
+                    <span class="inline-flex w-fit rounded-full border {{ $hasBidangMinat ? 'border-forest/30 bg-forest/10 text-forest' : 'border-gold/50 bg-gold/10 text-gold' }} px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                        {{ $hasBidangMinat ? 'Minat sudah dipilih' : 'Perlu pilih minat' }}
+                    </span>
+                </div>
+
+                <dl class="grid divide-y divide-slate-100 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
+                    <div class="px-6 py-4">
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Nama</dt>
+                        <dd class="mt-1 text-sm font-medium text-navy">{{ $mahasiswa->user->name }}</dd>
+                    </div>
+                    <div class="px-6 py-4">
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate">NIM</dt>
+                        <dd class="mt-1 font-mono text-sm font-medium text-navy">{{ $mahasiswa->nim }}</dd>
+                    </div>
+                    <div class="px-6 py-4">
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Angkatan</dt>
+                        <dd class="mt-1 text-sm font-medium text-navy">{{ $mahasiswa->angkatan }}</dd>
+                    </div>
+                    <div class="px-6 py-4">
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Bidang Minat</dt>
+                        <dd class="mt-1 text-sm font-medium text-navy">{{ $mahasiswa->bidangMinat?->nama ?? 'Belum dipilih' }}</dd>
+                    </div>
+                </dl>
             </div>
-            <dl class="grid divide-y divide-slate-100 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
-                <div class="px-6 py-4">
-                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Nama</dt>
-                    <dd class="mt-1 text-sm font-medium text-navy">{{ $mahasiswa->user->name }}</dd>
-                </div>
-                <div class="px-6 py-4">
-                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate">NIM</dt>
-                    <dd class="mt-1 font-mono text-sm font-medium text-navy">{{ $mahasiswa->nim }}</dd>
-                </div>
-                <div class="px-6 py-4">
-                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Angkatan</dt>
-                    <dd class="mt-1 text-sm font-medium text-navy">{{ $mahasiswa->angkatan }}</dd>
-                </div>
-                <div class="px-6 py-4">
-                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Bidang Minat</dt>
-                    <dd class="mt-1 text-sm font-medium text-navy">{{ $mahasiswa->bidangMinat->nama }}</dd>
-                </div>
-            </dl>
+
+            <div class="rounded-xl border border-navy/10 bg-navy p-6 text-white shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Langkah Berikutnya</p>
+                <h3 class="mt-2 font-display text-xl font-semibold">
+                    @if (! $hasBidangMinat)
+                        Pilih bidang minat untuk membuka daftar dosen.
+                    @elseif ($bimbingan)
+                        Lengkapi detail bimbingan tugas akhir.
+                    @elseif ($pengajuanAktif)
+                        Tunggu keputusan dosen pembimbing.
+                    @else
+                        Ajukan calon dosen pembimbing.
+                    @endif
+                </h3>
+                <p class="mt-3 text-sm leading-6 text-slate-200">
+                    SIMBIMA menampilkan dosen berdasarkan bidang minat yang kamu pilih, sehingga pengajuan lebih terarah dan slot pembimbing lebih mudah dipantau.
+                </p>
+            </div>
         </section>
 
-        <section class="rounded-lg border border-slate-200 bg-white px-6 py-5 shadow-sm">
+        <section class="rounded-xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
             <div class="mb-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-slate">Progres Bimbingan</p>
                 <h3 class="mt-1 font-display text-lg font-semibold text-navy">Alur Tugas Akhir</h3>
             </div>
 
-            <ol class="space-y-0">
+            <ol class="grid gap-5 lg:grid-cols-5">
                 @foreach ($stages as $index => $stage)
                     @php
                         $stageNumber = $index + 1;
                         $isReached = $currentStage >= $stageNumber;
-                        $isPassed = $currentStage > $stageNumber;
                     @endphp
 
-                    <li class="relative flex gap-4 pb-7 last:pb-0">
-                        @if (! $loop->last)
-                            <div class="absolute left-[9px] top-5 h-full w-px {{ $isPassed ? 'bg-forest' : 'bg-slate-200' }}" aria-hidden="true"></div>
-                        @endif
-
-                        <div class="relative z-10 mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full {{ $isReached ? 'bg-forest ring-4 ring-forest/10' : 'border border-slate-300 bg-white' }}" aria-hidden="true">
-                            @if ($isReached)
-                                <span class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                            @endif
-                        </div>
-
-                        <div class="-mt-0.5">
+                    <li class="relative rounded-lg border {{ $isReached ? 'border-forest/30 bg-forest/5' : 'border-slate-200 bg-white' }} p-4">
+                        <div class="mb-3 flex items-center gap-3">
+                            <span class="flex h-8 w-8 items-center justify-center rounded-full {{ $isReached ? 'bg-forest text-white' : 'border border-slate-300 text-slate' }} font-mono text-xs font-semibold">
+                                {{ $stageNumber }}
+                            </span>
                             <p class="text-sm font-semibold {{ $isReached ? 'text-navy' : 'text-slate' }}">{{ $stage['label'] }}</p>
-                            <p class="mt-0.5 text-xs text-slate">{{ $stage['detail'] }}</p>
                         </div>
+                        <p class="text-xs leading-5 text-slate">{{ $stage['detail'] }}</p>
                     </li>
                 @endforeach
             </ol>
         </section>
 
-        @if ($bimbingan)
-            <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
+        @if (! $hasBidangMinat)
+            <section class="rounded-xl border border-gold/40 bg-white shadow-sm">
+                <div class="grid gap-0 lg:grid-cols-[0.85fr_1.15fr]">
+                    <div class="border-b border-gold/30 bg-paper/70 px-6 py-6 lg:border-b-0 lg:border-r">
+                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate">Mulai Dari Sini</p>
+                        <h3 class="mt-2 font-display text-2xl font-semibold text-navy">Pilih bidang minat</h3>
+                        <p class="mt-3 text-sm leading-6 text-slate">
+                            Pilihan ini menentukan daftar dosen yang bisa kamu ajukan sebagai pembimbing utama. Kamu masih bisa meminta admin membantu jika salah memilih sebelum ada pengajuan.
+                        </p>
+                    </div>
+
+                    <form method="POST" action="{{ route('mahasiswa.bidang-minat.update') }}" class="space-y-5 px-6 py-6">
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            @foreach ($bidangMinats as $bidangMinat)
+                                <label class="group relative flex cursor-pointer rounded-lg border border-slate-200 bg-white p-4 transition hover:border-gold hover:bg-gold/5 has-[:checked]:border-navy has-[:checked]:bg-navy/5">
+                                    <input type="radio" name="bidang_minat_id" value="{{ $bidangMinat->id }}" class="peer sr-only" required>
+                                    <span class="flex-1">
+                                        <span class="block font-display text-base font-semibold text-navy">{{ $bidangMinat->nama }}</span>
+                                        <span class="mt-1 block text-xs text-slate">{{ $bidangMinat->dosens_count }} dosen tersedia</span>
+                                    </span>
+                                    <span class="ml-3 mt-1 h-4 w-4 rounded-full border border-slate-300 peer-checked:border-navy peer-checked:bg-navy"></span>
+                                </label>
+                            @endforeach
+                        </div>
+
+                        <div class="flex justify-end border-t border-slate-100 pt-5">
+                            <button type="submit" class="inline-flex h-10 items-center rounded-md bg-navy px-5 text-sm font-semibold text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                                Simpan Bidang Minat
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        @elseif ($bimbingan)
+            <section class="rounded-xl border border-slate-200 bg-white shadow-sm">
                 <div class="border-b border-gold/30 px-6 py-4">
-                    <h3 class="font-display text-lg font-semibold text-navy">Bimbingan Aktif</h3>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate">Bimbingan</p>
+                    <h3 class="mt-1 font-display text-lg font-semibold text-navy">Bimbingan Aktif</h3>
                 </div>
                 <form method="POST" action="{{ route('mahasiswa.bimbingan.update', $bimbingan) }}" class="space-y-6 px-6 py-5">
                     @csrf
@@ -151,9 +216,27 @@
                         </button>
                     </div>
                 </form>
+
+                <div class="space-y-6 border-t border-slate-100 px-6 py-5">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate">Status Kesiapan</p>
+                        <h4 class="mt-1 font-display text-lg font-semibold text-navy">Izin Tahapan Akademik</h4>
+                        <div class="mt-4">
+                            @include('partials.readiness-badges', ['bimbingan' => $bimbingan])
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate">Log Bimbingan</p>
+                        <h4 class="mt-1 font-display text-lg font-semibold text-navy">Catatan Bimbingan</h4>
+                        <div class="mt-4">
+                            @include('partials.catatan-bimbingan', ['bimbingan' => $bimbingan])
+                        </div>
+                    </div>
+                </div>
             </section>
         @elseif ($pengajuanAktif)
-            <section class="rounded-lg border border-gold/40 bg-white shadow-sm">
+            <section class="rounded-xl border border-gold/40 bg-white shadow-sm">
                 <div class="flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <div class="flex flex-wrap items-center gap-3">
@@ -176,8 +259,9 @@
                 </div>
             </section>
         @else
-            <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                 <div class="flex flex-col gap-1 border-b border-gold/30 px-6 py-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate">{{ $mahasiswa->bidangMinat->nama }}</p>
                     <h3 class="font-display text-lg font-semibold text-navy">Daftar Dosen Sesuai Bidang Minat</h3>
                     <p class="text-sm text-slate">Ajukan dosen pembimbing berdasarkan ketersediaan slot angkatan {{ $mahasiswa->angkatan }}.</p>
                 </div>
@@ -217,7 +301,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td class="px-6 py-6 text-center text-slate" colspan="4">Belum ada dosen untuk bidang minat ini.</td>
+                                    <td class="px-6 py-8 text-center text-slate" colspan="4">Belum ada dosen untuk bidang minat ini.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -227,7 +311,7 @@
         @endif
 
         @if ($riwayatDitolak->isNotEmpty())
-            <section x-data="{ open: false }" class="rounded-lg border border-slate-200 bg-white shadow-sm">
+            <section x-data="{ open: false }" class="rounded-xl border border-slate-200 bg-white shadow-sm">
                 <button type="button" x-on:click="open = !open" class="flex w-full items-center justify-between gap-4 px-6 py-4 text-left focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
                     <span class="flex items-center gap-3">
                         <span class="text-sm font-medium text-navy">Riwayat Pengajuan Ditolak</span>

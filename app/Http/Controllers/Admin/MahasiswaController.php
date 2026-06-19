@@ -134,7 +134,7 @@ class MahasiswaController extends Controller
                 Rule::unique('mahasiswas', 'nim')->ignore($mahasiswa?->id),
             ],
             'angkatan' => ['required', 'integer', 'between:2000,2100'],
-            'bidang_minat_id' => ['required', 'integer', Rule::exists('bidang_minats', 'id')],
+            'bidang_minat_id' => ['nullable', 'integer', Rule::exists('bidang_minats', 'id')],
         ];
     }
 }

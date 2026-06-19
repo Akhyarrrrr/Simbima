@@ -32,7 +32,8 @@
 
     <div>
         <x-input-label for="bidang_minat_id" value="Bidang Minat" class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate" />
-        <select id="bidang_minat_id" name="bidang_minat_id" class="block w-full rounded-md border-slate-300 text-sm text-navy shadow-sm focus:border-navy focus:ring-navy" required>
+        <select id="bidang_minat_id" name="bidang_minat_id" class="block w-full rounded-md border-slate-300 text-sm text-navy shadow-sm focus:border-navy focus:ring-navy">
+            <option value="">Belum dipilih mahasiswa</option>
             @foreach ($bidangMinats as $bidangMinat)
                 <option value="{{ $bidangMinat->id }}" @selected(old('bidang_minat_id', $mahasiswa?->bidang_minat_id) == $bidangMinat->id)>
                     {{ $bidangMinat->nama }}
