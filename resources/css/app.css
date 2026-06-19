@@ -5,6 +5,10 @@
 @tailwind utilities;
 
 @layer base {
+    [x-cloak] {
+        display: none !important;
+    }
+
     body {
         font-family: 'Inter', sans-serif;
         background-color: theme('colors.paper');

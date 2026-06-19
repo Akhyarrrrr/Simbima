@@ -17,6 +17,8 @@
             $eyebrow = trim($__env->yieldContent('eyebrow')) ?: $routeLabel;
             $title = trim($__env->yieldContent('title'));
             $user = Auth::user();
+            $unreadNotificationsCount = $user?->unreadNotifications()->count() ?? 0;
+            $recentNotifications = $user?->notifications()->latest()->limit(10)->get() ?? collect();
         @endphp
 
         <div class="min-h-screen bg-paper text-navy">
@@ -92,6 +94,52 @@
                 </nav>
 
                 <div class="border-t border-white/10 px-4 py-5">
+                    <div x-data="{ open: false }" class="relative mb-3">
+                        <button type="button" x-on:click="open = !open" x-on:keydown.escape.window="open = false" class="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium text-slate-200 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy" aria-label="Buka notifikasi">
+                            <span class="relative inline-flex h-5 w-5 shrink-0 items-center justify-center">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17H9m10-1.5c-1.2-1.15-1.75-2.55-1.75-4.25V9a5.25 5.25 0 0 0-10.5 0v2.25c0 1.7-.55 3.1-1.75 4.25h14ZM10 20a2 2 0 0 0 4 0" />
+                                </svg>
+                                @if ($unreadNotificationsCount > 0)
+                                    <span class="absolute -right-2 -top-2 min-w-5 rounded-full bg-rust px-1.5 py-0.5 text-center text-[10px] font-semibold leading-none text-white">
+                                        {{ $unreadNotificationsCount > 9 ? '9+' : $unreadNotificationsCount }}
+                                    </span>
+                                @endif
+                            </span>
+                            <span>Notifikasi</span>
+                        </button>
+
+                        <div x-show="open" x-cloak x-on:click.outside="open = false" class="absolute bottom-full left-0 z-50 mb-3 w-80 overflow-hidden rounded-lg border border-slate-200 bg-white text-navy shadow-lg">
+                            <div class="border-b border-slate-200 px-4 py-3">
+                                <p class="font-display text-base font-semibold text-navy">Notifikasi</p>
+                            </div>
+
+                            <div class="max-h-80 overflow-y-auto">
+                                @forelse ($recentNotifications as $notification)
+                                    <div class="border-b border-slate-100 px-4 py-3 last:border-b-0">
+                                        <p class="text-sm {{ $notification->read_at ? 'text-slate-400' : 'font-medium text-navy' }}">
+                                            {{ $notification->data['message'] ?? 'Notifikasi baru.' }}
+                                        </p>
+                                        <p class="mt-1 text-xs text-slate-400">
+                                            {{ $notification->created_at->diffForHumans() }}
+                                        </p>
+                                    </div>
+                                @empty
+                                    <p class="px-4 py-5 text-sm italic text-slate-400">Belum ada notifikasi.</p>
+                                @endforelse
+                            </div>
+
+                            @if ($unreadNotificationsCount > 0)
+                                <form method="POST" action="{{ route('notifications.mark-all-read') }}" class="border-t border-slate-200 px-4 py-3">
+                                    @csrf
+                                    <button type="submit" class="text-sm font-semibold text-navy underline decoration-gold/60 underline-offset-4 hover:text-navy/80 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                                        Tandai semua dibaca
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="rounded-md bg-white/5 px-3 py-3">
                         <p class="truncate text-sm font-semibold text-white">{{ $user?->name }}</p>
                         <p class="mt-0.5 truncate text-xs text-slate-200">{{ $user?->email }}</p>

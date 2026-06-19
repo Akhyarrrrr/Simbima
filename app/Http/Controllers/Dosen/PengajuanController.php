@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Dosen;
 use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
 use App\Models\PengajuanBimbingan;
+use App\Notifications\PengajuanDiterima;
+use App\Notifications\PengajuanDitolak;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,9 +18,9 @@ class PengajuanController extends Controller
     {
         $dosen = $request->user()->dosen()->firstOrFail();
 
-        DB::transaction(function () use ($dosen, $id) {
+        $pengajuan = DB::transaction(function () use ($dosen, $id) {
             $pengajuan = PengajuanBimbingan::query()
-                ->with('mahasiswa')
+                ->with(['mahasiswa.user', 'dosen.user'])
                 ->where('id', $id)
                 ->where('dosen_id', $dosen->id)
                 ->where('status', 'pending')
@@ -47,7 +49,11 @@ class PengajuanController extends Controller
                 'dospem1_id' => $dosen->id,
                 'status' => 'aktif',
             ]);
+
+            return $pengajuan;
         });
+
+        $pengajuan->mahasiswa->user->notify(new PengajuanDiterima($pengajuan));
 
         return redirect()
             ->route('dosen.dashboard')
@@ -63,6 +69,7 @@ class PengajuanController extends Controller
         $dosen = $request->user()->dosen()->firstOrFail();
 
         $pengajuan = PengajuanBimbingan::query()
+            ->with(['mahasiswa.user', 'dosen.user'])
             ->where('id', $id)
             ->where('dosen_id', $dosen->id)
             ->where('status', 'pending')
@@ -72,6 +79,8 @@ class PengajuanController extends Controller
             'status' => 'ditolak',
             'catatan_penolakan' => $validated['catatan_penolakan'],
         ]);
+
+        $pengajuan->mahasiswa->user->notify(new PengajuanDitolak($pengajuan));
 
         return redirect()
             ->route('dosen.dashboard')

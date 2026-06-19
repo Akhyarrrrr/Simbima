@@ -9,11 +9,11 @@
             $currentStage = 1;
         }
 
-        if ($bimbingan && $bimbingan->status === 'aktif') {
+        if ($bimbinganProgres && $bimbinganProgres->status === 'aktif') {
             $currentStage = 3;
         }
 
-        if ($bimbingan && $bimbingan->status === 'selesai') {
+        if ($bimbinganProgres && $bimbinganProgres->status === 'selesai') {
             $currentStage = 4;
         }
 
@@ -30,8 +30,8 @@
             ],
             [
                 'label' => 'Bimbingan Aktif',
-                'detail' => $bimbingan
-                    ? 'Pembimbing 1: '.$bimbingan->dospem1->user->name
+                'detail' => $bimbinganProgres
+                    ? 'Pembimbing 1: '.$bimbinganProgres->dospem1->user->name
                     : 'Belum memasuki proses bimbingan',
             ],
             [
@@ -222,6 +222,37 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+            </section>
+        @endif
+
+        @if ($riwayatDitolak->isNotEmpty())
+            <section x-data="{ open: false }" class="rounded-lg border border-slate-200 bg-white shadow-sm">
+                <button type="button" x-on:click="open = !open" class="flex w-full items-center justify-between gap-4 px-6 py-4 text-left focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                    <span class="flex items-center gap-3">
+                        <span class="text-sm font-medium text-navy">Riwayat Pengajuan Ditolak</span>
+                        <span class="rounded-full bg-rust/10 px-2 py-0.5 text-xs font-semibold text-rust">
+                            {{ $riwayatDitolak->count() }}
+                        </span>
+                    </span>
+
+                    <svg class="h-4 w-4 text-slate transition-transform" x-bind:class="{ 'rotate-180': open }" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <div x-show="open" x-cloak class="space-y-3 border-t border-slate-100 px-6 py-4">
+                    @foreach ($riwayatDitolak as $pengajuanDitolak)
+                        <article class="rounded-md border border-rust/20 bg-rust/5 px-4 py-3">
+                            <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                                <p class="text-sm font-medium text-navy">{{ $pengajuanDitolak->dosen->user->name }}</p>
+                                <p class="text-xs text-slate">{{ $pengajuanDitolak->created_at->format('d M Y') }}</p>
+                            </div>
+                            <p class="mt-2 text-sm italic text-slate">
+                                {{ $pengajuanDitolak->catatan_penolakan ?: 'Tidak ada catatan penolakan.' }}
+                            </p>
+                        </article>
+                    @endforeach
                 </div>
             </section>
         @endif

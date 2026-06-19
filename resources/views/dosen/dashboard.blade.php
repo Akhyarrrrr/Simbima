@@ -112,6 +112,7 @@
                                 <th scope="col" class="px-4 py-3">Nama</th>
                                 <th scope="col" class="px-4 py-3">NIM</th>
                                 <th scope="col" class="px-4 py-3">Judul TA</th>
+                                <th scope="col" class="px-4 py-3 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white">
@@ -124,6 +125,19 @@
                                             <span class="font-display text-sm font-semibold text-navy">{{ $bimbingan->judul_ta }}</span>
                                         @else
                                             <span class="text-sm italic text-slate">Belum ditentukan</span>
+                                        @endif
+                                    </td>
+                                    <td class="whitespace-nowrap px-4 py-4 text-right">
+                                        @if ($bimbingan->dospem1_id === $dosen->id)
+                                            <form method="POST" action="{{ route('dosen.bimbingan.selesai', $bimbingan) }}" onsubmit="return confirm('Tandai bimbingan ini sebagai selesai?')">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="inline-flex items-center rounded-md border border-forest px-3 py-1.5 text-sm font-semibold text-forest transition-colors hover:bg-forest hover:text-white focus:outline-none focus:ring-2 focus:ring-forest focus:ring-offset-2">
+                                                    Tandai Selesai
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="text-sm italic text-slate">-</span>
                                         @endif
                                     </td>
                                 </tr>

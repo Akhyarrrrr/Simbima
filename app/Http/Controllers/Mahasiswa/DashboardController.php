@@ -47,6 +47,19 @@ class DashboardController extends Controller
             ->where('status', 'aktif')
             ->first();
 
-        return view('mahasiswa.dashboard', compact('mahasiswa', 'dosens', 'allDosens', 'pengajuanAktif', 'bimbingan'));
+        $bimbinganProgres = Bimbingan::query()
+            ->with(['dospem1.user', 'dospem2.user'])
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->latest()
+            ->first();
+
+        $riwayatDitolak = PengajuanBimbingan::query()
+            ->with('dosen.user')
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'ditolak')
+            ->latest()
+            ->get();
+
+        return view('mahasiswa.dashboard', compact('mahasiswa', 'dosens', 'allDosens', 'pengajuanAktif', 'bimbingan', 'bimbinganProgres', 'riwayatDitolak'));
     }
 }

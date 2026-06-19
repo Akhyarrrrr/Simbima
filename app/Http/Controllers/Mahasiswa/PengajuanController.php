@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mahasiswa;
 use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\PengajuanBimbingan;
+use App\Notifications\PengajuanBaru;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -44,11 +45,14 @@ class PengajuanController extends Controller
             ]);
         }
 
-        PengajuanBimbingan::create([
+        $pengajuan = PengajuanBimbingan::create([
             'mahasiswa_id' => $mahasiswa->id,
             'dosen_id' => $dosen->id,
             'status' => 'pending',
         ]);
+
+        $pengajuan->load(['mahasiswa.user', 'dosen.user']);
+        $dosen->user->notify(new PengajuanBaru($pengajuan));
 
         return redirect()
             ->route('mahasiswa.dashboard')

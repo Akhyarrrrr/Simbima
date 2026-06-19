@@ -7,9 +7,14 @@
                 <h2 class="font-display text-2xl font-semibold text-navy">Kelola Mahasiswa</h2>
                 <p class="mt-1 text-sm text-slate">Tambah dan ubah data mahasiswa bimbingan tugas akhir.</p>
             </div>
-            <a href="{{ route('admin.mahasiswa.create') }}" class="inline-flex items-center justify-center rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
-                Tambah Mahasiswa
-            </a>
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <a href="{{ route('admin.mahasiswa.import.create') }}" class="inline-flex items-center justify-center rounded-md border border-navy px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                    Import dari Excel/CSV
+                </a>
+                <a href="{{ route('admin.mahasiswa.create') }}" class="inline-flex items-center justify-center rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                    Tambah Mahasiswa
+                </a>
+            </div>
         </div>
     </x-slot>
 

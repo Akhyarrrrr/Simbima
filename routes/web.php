@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\DosenController as AdminDosenController;
 use App\Http\Controllers\Admin\MahasiswaController as AdminMahasiswaController;
+use App\Http\Controllers\Admin\MahasiswaImportController as AdminMahasiswaImportController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Dosen\BimbinganController as DosenBimbinganController;
 use App\Http\Controllers\Dosen\DashboardController as DosenDashboardController;
 use App\Http\Controllers\Dosen\PengajuanController as DosenPengajuanController;
 use App\Http\Controllers\Mahasiswa\BimbinganController as MahasiswaBimbinganController;
@@ -32,6 +34,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/notifications/mark-all-read', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+
+        return back();
+    })->name('notifications.mark-all-read');
 });
 
 Route::middleware(['auth', EnsureMahasiswa::class])
@@ -51,6 +58,7 @@ Route::middleware(['auth', EnsureDosen::class])
         Route::get('/dashboard', [DosenDashboardController::class, 'index'])->name('dashboard');
         Route::patch('/pengajuan/{id}/approve', [DosenPengajuanController::class, 'approve'])->name('pengajuan.approve');
         Route::patch('/pengajuan/{id}/reject', [DosenPengajuanController::class, 'reject'])->name('pengajuan.reject');
+        Route::patch('/bimbingan/{id}/selesai', [DosenBimbinganController::class, 'markSelesai'])->name('bimbingan.selesai');
     });
 
 Route::middleware(['auth', EnsureAdmin::class])
@@ -59,6 +67,9 @@ Route::middleware(['auth', EnsureAdmin::class])
     ->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('dosen', AdminDosenController::class);
+        Route::get('mahasiswa/import', [AdminMahasiswaImportController::class, 'create'])->name('mahasiswa.import.create');
+        Route::post('mahasiswa/import', [AdminMahasiswaImportController::class, 'store'])->name('mahasiswa.import.store');
+        Route::get('mahasiswa/import/download/{filename}', [AdminMahasiswaImportController::class, 'downloadCredentials'])->name('mahasiswa.import.download');
         Route::resource('mahasiswa', AdminMahasiswaController::class);
     });
 
