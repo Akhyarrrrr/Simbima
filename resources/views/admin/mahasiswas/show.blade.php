@@ -3,6 +3,18 @@
 
 <x-app-layout>
     <div class="max-w-3xl space-y-6">
+        @if (session('status'))
+            <div class="rounded-md border border-forest/20 bg-forest/10 px-4 py-3 text-sm font-medium text-forest">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="rounded-md border border-rust/20 bg-rust/10 px-4 py-3 text-sm font-medium text-rust">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
         <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
             <div class="mb-5 border-b border-gold/30 pb-4">
                 <p class="text-xs font-semibold uppercase tracking-wide text-slate">Profil Akademik</p>
@@ -32,6 +44,49 @@
                 </div>
             </dl>
         </section>
+
+        @if ($mahasiswa->bimbingan)
+            <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                <div class="mb-5 border-b border-gold/30 pb-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate">Bimbingan</p>
+                    <h3 class="mt-1 font-display text-lg font-semibold text-navy">Pembimbing Tugas Akhir</h3>
+                </div>
+
+                <dl class="grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Dospem 1</dt>
+                        <dd class="mt-1 text-sm font-medium text-navy">{{ $mahasiswa->bimbingan->dospem1->user->name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Dospem 2 Saat Ini</dt>
+                        <dd class="mt-1 text-sm font-medium text-navy">{{ $mahasiswa->bimbingan->dospem2?->user?->name ?? 'Belum ditentukan' }}</dd>
+                    </div>
+                </dl>
+
+                <form method="POST" action="{{ route('admin.bimbingan.dospem2.update', $mahasiswa->bimbingan) }}" class="mt-5 border-t border-slate-100 pt-5">
+                    @csrf
+                    @method('PATCH')
+
+                    <x-input-label for="dospem2_id" value="Atur Dospem 2" class="text-slate" />
+                    <select id="dospem2_id" name="dospem2_id" class="mt-1 block h-10 w-full rounded-md border-slate-300 text-sm text-navy shadow-sm focus:border-navy focus:ring-navy">
+                        <option value="">Belum ditentukan</option>
+                        @foreach ($dosens as $dosen)
+                            @if ($dosen->id !== $mahasiswa->bimbingan->dospem1_id)
+                                <option value="{{ $dosen->id }}" @selected(old('dospem2_id', $mahasiswa->bimbingan->dospem2_id) == $dosen->id)>
+                                    {{ $dosen->user->name }}
+                                </option>
+                            @endif
+                        @endforeach
+                    </select>
+
+                    <div class="mt-4 flex justify-end">
+                        <button type="submit" class="inline-flex h-10 items-center rounded-md bg-navy px-4 text-sm font-semibold text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                            Simpan Dospem 2
+                        </button>
+                    </div>
+                </form>
+            </section>
+        @endif
 
         <div>
             <a class="inline-flex items-center rounded-md border border-navy px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2" href="{{ route('admin.mahasiswa.index') }}">

@@ -14,9 +14,32 @@ class MahasiswaImportTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_mahasiswa_import_creates_mahasiswa_and_collects_credentials(): void
+    public function test_mahasiswa_import_creates_mahasiswa_without_bidang_minat(): void
     {
-        BidangMinat::create(['nama' => 'Rekayasa Perangkat Lunak']);
+        $import = new MahasiswaImport();
+
+        $mahasiswa = $import->model([
+            'nama' => 'Mahasiswa Import',
+            'nim' => '210001',
+            'email' => 'mahasiswa.import@simbima.test',
+            'angkatan' => 2021,
+        ]);
+
+        $this->assertInstanceOf(Mahasiswa::class, $mahasiswa);
+        $this->assertNull($mahasiswa->bidang_minat_id);
+        $this->assertSame(1, $import->successCount);
+        $this->assertCount(1, $import->credentials);
+        $this->assertSame('Mahasiswa Import', $import->credentials[0]['nama']);
+        $this->assertSame('mahasiswa.import@simbima.test', $import->credentials[0]['email']);
+        $this->assertSame('210001', $import->credentials[0]['nim']);
+        $this->assertSame(12, strlen($import->credentials[0]['plain_password']));
+        $this->assertTrue(Hash::check($import->credentials[0]['plain_password'], $mahasiswa->user->password));
+        $this->assertSame('mahasiswa', $mahasiswa->user->role);
+    }
+
+    public function test_mahasiswa_import_sets_valid_bidang_minat_when_provided(): void
+    {
+        $bidangMinat = BidangMinat::create(['nama' => 'Rekayasa Perangkat Lunak']);
 
         $import = new MahasiswaImport();
 
@@ -29,14 +52,8 @@ class MahasiswaImportTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Mahasiswa::class, $mahasiswa);
+        $this->assertSame($bidangMinat->id, $mahasiswa->bidang_minat_id);
         $this->assertSame(1, $import->successCount);
-        $this->assertCount(1, $import->credentials);
-        $this->assertSame('Mahasiswa Import', $import->credentials[0]['nama']);
-        $this->assertSame('mahasiswa.import@simbima.test', $import->credentials[0]['email']);
-        $this->assertSame('210001', $import->credentials[0]['nim']);
-        $this->assertSame(12, strlen($import->credentials[0]['plain_password']));
-        $this->assertTrue(Hash::check($import->credentials[0]['plain_password'], $mahasiswa->user->password));
-        $this->assertSame('mahasiswa', $mahasiswa->user->role);
     }
 
     public function test_mahasiswa_import_skips_unknown_bidang_minat_and_duplicates(): void

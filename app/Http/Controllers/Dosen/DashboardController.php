@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dosen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
+use App\Models\Dosen;
 use App\Models\PengajuanBimbingan;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,11 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        return view('dosen.dashboard', compact('dosen', 'pendingPengajuans', 'activeBimbingans'));
+        $allDosens = Dosen::query()
+            ->with('user')
+            ->orderBy('nip')
+            ->get();
+
+        return view('dosen.dashboard', compact('dosen', 'pendingPengajuans', 'activeBimbingans', 'allDosens'));
     }
 }

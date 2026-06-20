@@ -1,43 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Dosen;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class BimbinganController extends Controller
 {
-    public function markSelesai(int $id): RedirectResponse
-    {
-        $dosen = Auth::user()->dosen()->firstOrFail();
-        $bimbingan = Bimbingan::findOrFail($id);
-
-        abort_unless((int) $bimbingan->dospem1_id === (int) $dosen->id, 403);
-
-        if (! $bimbingan->boleh_sidang) {
-            throw ValidationException::withMessages([
-                'bimbingan' => 'Bimbingan hanya bisa ditandai selesai setelah status Boleh Sidang aktif.',
-            ]);
-        }
-
-        $bimbingan->update([
-            'status' => 'selesai',
-        ]);
-
-        return back()->with('status', 'Bimbingan berhasil ditandai selesai.');
-    }
-
     public function updateDospem2(Request $request, int $id): RedirectResponse
     {
-        $dosen = $request->user()->dosen()->firstOrFail();
         $bimbingan = Bimbingan::findOrFail($id);
-
-        abort_unless((int) $bimbingan->dospem1_id === (int) $dosen->id, 403);
 
         $validated = $request->validate([
             'dospem2_id' => ['nullable', 'integer', Rule::exists('dosens', 'id')],

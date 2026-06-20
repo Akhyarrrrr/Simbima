@@ -154,7 +154,7 @@
             </aside>
 
             <main class="min-h-screen bg-paper pl-[260px]">
-                <div class="px-8 py-8">
+                <div class="px-8 py-8 animate-simbima-fade-up">
                     <div class="pb-5 mb-8 border-b border-gold/30">
                         <p class="font-sans text-xs font-semibold uppercase tracking-[0.22em] text-slate">
                             {{ $eyebrow }}

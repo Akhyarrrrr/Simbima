@@ -42,20 +42,24 @@ class MahasiswaImport implements ToModel, WithHeadingRow
         $angkatan = trim((string) ($row['angkatan'] ?? ''));
         $bidangMinatName = trim((string) ($row['bidang_minat'] ?? ''));
 
-        if ($nama === '' || $nim === '' || $email === '' || $angkatan === '' || $bidangMinatName === '') {
+        if ($nama === '' || $nim === '' || $email === '' || $angkatan === '') {
             $this->skip('Kolom wajib tidak lengkap.');
 
             return null;
         }
 
-        $bidangMinat = BidangMinat::query()
-            ->whereRaw('LOWER(nama) = ?', [Str::lower($bidangMinatName)])
-            ->first();
+        $bidangMinat = null;
 
-        if (! $bidangMinat) {
-            $this->skip("Bidang minat '{$bidangMinatName}' tidak ditemukan.");
+        if ($bidangMinatName !== '') {
+            $bidangMinat = BidangMinat::query()
+                ->whereRaw('LOWER(nama) = ?', [Str::lower($bidangMinatName)])
+                ->first();
 
-            return null;
+            if (! $bidangMinat) {
+                $this->skip("Bidang minat '{$bidangMinatName}' tidak ditemukan.");
+
+                return null;
+            }
         }
 
         $plainPassword = Str::random(12);
@@ -74,7 +78,7 @@ class MahasiswaImport implements ToModel, WithHeadingRow
                     'user_id' => $user->id,
                     'nim' => $nim,
                     'angkatan' => (int) $angkatan,
-                    'bidang_minat_id' => $bidangMinat->id,
+                    'bidang_minat_id' => $bidangMinat?->id,
                 ]);
             });
         } catch (QueryException $exception) {

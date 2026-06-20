@@ -115,6 +115,12 @@ class DosenController extends Controller
 
     public function destroy(Dosen $dosen): RedirectResponse
     {
+        if ($dosen->bimbingansDospem1()->exists() || $dosen->bimbingansDospem2()->exists()) {
+            return back()->withErrors([
+                'dosen' => 'Dosen tidak bisa dihapus karena masih memiliki data bimbingan.',
+            ]);
+        }
+
         DB::transaction(function () use ($dosen) {
             $dosen->user->delete();
         });

@@ -15,3 +15,44 @@
         color: theme('colors.navy');
     }
 }
+
+@layer utilities {
+    @keyframes simbima-fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes simbima-soft-scale {
+        from {
+            opacity: 0;
+            transform: scale(0.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .animate-simbima-fade-up {
+        animation: simbima-fade-up 520ms ease-out both;
+    }
+
+    .animate-simbima-soft-scale {
+        animation: simbima-soft-scale 420ms ease-out both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .animate-simbima-fade-up,
+        .animate-simbima-soft-scale {
+            animation: none;
+        }
+    }
+}

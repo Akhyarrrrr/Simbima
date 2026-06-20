@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class BimbinganController extends Controller
 {
@@ -16,11 +15,6 @@ class BimbinganController extends Controller
 
         $validated = $request->validate([
             'judul_ta' => ['nullable', 'string', 'max:255'],
-            'dospem2_id' => [
-                'nullable',
-                'integer',
-                Rule::exists('dosens', 'id'),
-            ],
         ]);
 
         $bimbingan = Bimbingan::query()
@@ -30,7 +24,6 @@ class BimbinganController extends Controller
 
         $bimbingan->update([
             'judul_ta' => $validated['judul_ta'] ?? null,
-            'dospem2_id' => $validated['dospem2_id'] ?? null,
         ]);
 
         return redirect()

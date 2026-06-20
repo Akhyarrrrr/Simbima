@@ -22,7 +22,7 @@
                     <x-input-label for="file" value="File Import" class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate" />
                     <input id="file" name="file" type="file" accept=".csv,.xlsx" required class="block w-full rounded-md border border-slate-300 bg-white text-sm text-navy file:mr-4 file:border-0 file:bg-navy file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy">
                     <p class="mt-2 text-xs leading-5 text-slate">
-                        Kolom wajib: <span class="font-mono">nama</span>, <span class="font-mono">nim</span>, <span class="font-mono">email</span>, <span class="font-mono">angkatan</span>, <span class="font-mono">bidang_minat</span>.
+                        Kolom wajib: <span class="font-mono">nama</span>, <span class="font-mono">nim</span>, <span class="font-mono">email</span>, <span class="font-mono">angkatan</span>. Kolom <span class="font-mono">bidang_minat</span> opsional; jika kosong, mahasiswa memilih sendiri di dashboard.
                     </p>
                 </div>
 

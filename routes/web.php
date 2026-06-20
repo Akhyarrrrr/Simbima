@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\BimbinganController as AdminBimbinganController;
 use App\Http\Controllers\Admin\DosenController as AdminDosenController;
 use App\Http\Controllers\Admin\MahasiswaController as AdminMahasiswaController;
 use App\Http\Controllers\Admin\MahasiswaImportController as AdminMahasiswaImportController;
@@ -67,6 +68,7 @@ Route::middleware(['auth', EnsureDosen::class])
         Route::patch('/pengajuan/{id}/reject', [DosenPengajuanController::class, 'reject'])->name('pengajuan.reject');
         Route::patch('/bimbingan/{id}/selesai', [DosenBimbinganController::class, 'markSelesai'])->name('bimbingan.selesai');
         Route::patch('/bimbingan/{id}/status', [DosenBimbinganStatusController::class, 'update'])->name('bimbingan.status.update');
+        Route::patch('/bimbingan/{id}/dospem2', [DosenBimbinganController::class, 'updateDospem2'])->name('bimbingan.dospem2.update');
     });
 
 Route::middleware(['auth', EnsureAdmin::class])
@@ -74,6 +76,7 @@ Route::middleware(['auth', EnsureAdmin::class])
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::patch('bimbingan/{id}/dospem2', [AdminBimbinganController::class, 'updateDospem2'])->name('bimbingan.dospem2.update');
         Route::resource('dosen', AdminDosenController::class);
         Route::get('mahasiswa/import', [AdminMahasiswaImportController::class, 'create'])->name('mahasiswa.import.create');
         Route::post('mahasiswa/import', [AdminMahasiswaImportController::class, 'store'])->name('mahasiswa.import.store');

@@ -197,16 +197,10 @@
                             <p class="mt-1 text-sm font-medium text-navy">{{ $bimbingan->dospem1->user->name }}</p>
                         </div>
 
-                        <div>
-                            <x-input-label for="dospem2_id" value="Dospem 2" class="text-slate" />
-                            <select id="dospem2_id" name="dospem2_id" class="mt-1 block h-10 w-full rounded-md border-slate-300 text-sm text-navy shadow-sm focus:border-navy focus:ring-navy">
-                                <option value="">Belum ditentukan</option>
-                                @foreach ($allDosens as $dosen)
-                                    <option value="{{ $dosen->id }}" @selected(old('dospem2_id', $bimbingan->dospem2_id) == $dosen->id)>
-                                        {{ $dosen->user->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                        <div class="rounded-md border border-slate-200 bg-paper/70 px-4 py-3">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate">Dospem 2</p>
+                            <p class="mt-1 text-sm font-medium text-navy">{{ $bimbingan->dospem2?->user?->name ?? 'Belum ditentukan oleh pembimbing' }}</p>
+                            <p class="mt-1 text-xs text-slate">Dospem 2 ditetapkan oleh dospem 1 atau admin.</p>
                         </div>
                     </div>
 

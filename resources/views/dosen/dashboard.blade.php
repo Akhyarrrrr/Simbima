@@ -135,19 +135,62 @@
                                         <span x-text="open ? 'Tutup Detail' : 'Buka Detail'"></span>
                                     </button>
 
-                                    @if ($isDospem1)
-                                        <form method="POST" action="{{ route('dosen.bimbingan.selesai', $bimbingan) }}" onsubmit="return confirm('Tandai bimbingan ini sebagai selesai?')">
+                                    @if ($isDospem1 && $bimbingan->boleh_sidang)
+                                        <form method="POST" action="{{ route('dosen.bimbingan.selesai', $bimbingan) }}" onsubmit="return confirm('Bimbingan akan ditandai selesai karena mahasiswa sudah boleh sidang. Lanjutkan?')">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" class="inline-flex items-center rounded-md border border-forest px-3 py-1.5 text-sm font-semibold text-forest transition-colors hover:bg-forest hover:text-white focus:outline-none focus:ring-2 focus:ring-forest focus:ring-offset-2">
                                                 Tandai Selesai
                                             </button>
                                         </form>
+                                    @elseif ($isDospem1)
+                                        <span class="inline-flex items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold text-slate">
+                                            Selesai aktif setelah Boleh Sidang
+                                        </span>
                                     @endif
                                 </div>
                             </div>
 
                             <div x-show="open" x-cloak class="space-y-6 border-t border-slate-200 px-4 py-5">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-slate">Pembimbing</p>
+                                    <h5 class="mt-1 font-display text-lg font-semibold text-navy">Dospem 2</h5>
+
+                                    <div class="mt-4 rounded-lg border border-slate-200 bg-paper/50 p-4">
+                                        <p class="text-sm text-slate">
+                                            Saat ini:
+                                            <span class="font-medium text-navy">{{ $bimbingan->dospem2?->user?->name ?? 'Belum ditentukan' }}</span>
+                                        </p>
+
+                                        @if ($isDospem1)
+                                            <form method="POST" action="{{ route('dosen.bimbingan.dospem2.update', $bimbingan) }}" class="mt-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+                                                @csrf
+                                                @method('PATCH')
+
+                                                <div>
+                                                    <x-input-label for="dospem2_id_{{ $bimbingan->id }}" value="Assign / Update Dospem 2" class="text-slate" />
+                                                    <select id="dospem2_id_{{ $bimbingan->id }}" name="dospem2_id" class="mt-1 block h-10 w-full rounded-md border-slate-300 text-sm text-navy shadow-sm focus:border-navy focus:ring-navy">
+                                                        <option value="">Belum ditentukan</option>
+                                                        @foreach ($allDosens as $candidate)
+                                                            @if ($candidate->id !== $bimbingan->dospem1_id)
+                                                                <option value="{{ $candidate->id }}" @selected(old('dospem2_id', $bimbingan->dospem2_id) == $candidate->id)>
+                                                                    {{ $candidate->user->name }}
+                                                                </option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <button type="submit" class="inline-flex h-10 items-center justify-center rounded-md bg-navy px-4 text-sm font-semibold text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                                                    Simpan
+                                                </button>
+                                            </form>
+                                        @else
+                                            <p class="mt-2 text-xs italic text-slate">Hanya pembimbing 1 yang dapat mengatur dospem 2.</p>
+                                        @endif
+                                    </div>
+                                </div>
+
                                 <div>
                                     <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                                         <div>

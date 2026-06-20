@@ -43,11 +43,6 @@ class DashboardController extends Controller
                 });
         }
 
-        $allDosens = Dosen::query()
-            ->with('user')
-            ->orderBy('nip')
-            ->get();
-
         $pengajuanAktif = PengajuanBimbingan::query()
             ->with('dosen.user')
             ->where('mahasiswa_id', $mahasiswa->id)
@@ -74,6 +69,6 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        return view('mahasiswa.dashboard', compact('mahasiswa', 'bidangMinats', 'dosens', 'allDosens', 'pengajuanAktif', 'bimbingan', 'bimbinganProgres', 'riwayatDitolak'));
+        return view('mahasiswa.dashboard', compact('mahasiswa', 'bidangMinats', 'dosens', 'pengajuanAktif', 'bimbingan', 'bimbinganProgres', 'riwayatDitolak'));
     }
 }

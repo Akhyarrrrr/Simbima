@@ -13,7 +13,7 @@
     <body class="font-sans antialiased bg-paper text-navy">
         <div class="min-h-screen lg:grid lg:grid-cols-2">
             <aside class="hidden bg-navy lg:flex lg:items-center lg:justify-center">
-                <div class="w-full max-w-md px-12 text-center">
+                <div class="w-full max-w-md px-12 text-center animate-simbima-fade-up">
                     <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-white p-1.5" aria-hidden="true">
                         <img src="{{ asset('USK-logo.svg') }}" alt="" class="h-14 w-auto">
                     </div>
@@ -28,7 +28,7 @@
             </aside>
 
             <main class="flex items-center justify-center min-h-screen px-6 py-12 bg-paper lg:min-h-0">
-                <div class="w-full max-w-[400px] rounded-lg border border-slate-200 bg-white px-6 py-7 shadow-sm">
+                <div class="w-full max-w-[400px] rounded-lg border border-slate-200 bg-white px-6 py-7 shadow-sm animate-simbima-soft-scale">
                     {{ $slot }}
                 </div>
             </main>

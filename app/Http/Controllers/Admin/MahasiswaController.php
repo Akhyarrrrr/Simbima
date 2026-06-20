@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BidangMinat;
+use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -58,9 +59,13 @@ class MahasiswaController extends Controller
 
     public function show(Mahasiswa $mahasiswa): View
     {
-        $mahasiswa->load(['user', 'bidangMinat', 'pengajuanBimbingans.dosen.user', 'bimbingan']);
+        $mahasiswa->load(['user', 'bidangMinat', 'pengajuanBimbingans.dosen.user', 'bimbingan.dospem1.user', 'bimbingan.dospem2.user']);
+        $dosens = Dosen::query()
+            ->with('user')
+            ->orderBy('nip')
+            ->get();
 
-        return view('admin.mahasiswas.show', compact('mahasiswa'));
+        return view('admin.mahasiswas.show', compact('mahasiswa', 'dosens'));
     }
 
     public function edit(Mahasiswa $mahasiswa): View
