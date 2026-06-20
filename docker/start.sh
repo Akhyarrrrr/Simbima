@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-sed -i "s/Listen 80/Listen ${PORT:-10000}/" /etc/apache2/ports.conf
-sed -i "s/<VirtualHost \*:10000>/<VirtualHost *:${PORT:-10000}>/" /etc/apache2/sites-available/000-default.conf
+sed -i "s/Listen 80/Listen ${PORT:-8080}/" /etc/apache2/ports.conf
+sed -i "s/<VirtualHost \*:10000>/<VirtualHost *:${PORT:-8080}>/" /etc/apache2/sites-available/000-default.conf
 
 php artisan config:clear
 php artisan route:clear

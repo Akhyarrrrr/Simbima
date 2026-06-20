@@ -33,6 +33,6 @@ COPY docker/start.sh /usr/local/bin/start-render
 
 RUN chmod +x /usr/local/bin/start-render
 
-EXPOSE 10000
+EXPOSE 8080
 
 CMD ["start-render"]
