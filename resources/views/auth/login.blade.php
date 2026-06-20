@@ -37,12 +37,6 @@
                 <input id="remember_me" type="checkbox" class="rounded border-slate-300 text-navy shadow-sm focus:ring-navy" name="remember">
                 <span class="ms-2 text-sm text-slate">{{ __('Remember me') }}</span>
             </label>
-
-            @if (Route::has('password.request'))
-                <a class="rounded-md text-sm font-medium text-navy underline decoration-gold/60 underline-offset-4 hover:text-navy/80 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
         </div>
 
         <button type="submit" class="inline-flex h-10 w-full items-center justify-center rounded-md bg-navy px-4 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2 active:translate-y-0">

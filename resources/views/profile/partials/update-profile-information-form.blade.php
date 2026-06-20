@@ -10,10 +10,6 @@
         </p>
     </header>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form>
-
     <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
@@ -28,24 +24,6 @@
             <x-input-label for="email" value="Email" class="text-xs font-semibold uppercase tracking-wide text-slate" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full rounded-md border-slate-300 text-sm text-navy shadow-sm focus:border-navy focus:ring-navy" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
-
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="mt-2 text-sm text-slate">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button form="send-verification" class="rounded-md text-sm font-semibold text-navy underline hover:text-gold focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 text-sm font-medium text-forest">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
-                </div>
-            @endif
         </div>
 
         <div>
