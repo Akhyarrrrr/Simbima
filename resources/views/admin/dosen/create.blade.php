@@ -8,7 +8,7 @@
 
             <div>
                 <h3 class="font-display text-lg font-semibold text-navy">Data Dosen</h3>
-                <p class="mt-1 text-sm text-slate">Buat akun dosen sekaligus slot pembimbing untuk satu angkatan.</p>
+                <p class="mt-1 text-sm text-slate">Buat akun dosen sekaligus slot pembimbing per angkatan.</p>
             </div>
 
             @include('admin.dosen.form', ['dosen' => null, 'slot' => null])

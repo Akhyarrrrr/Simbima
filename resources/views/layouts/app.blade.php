@@ -67,14 +67,14 @@
                     @if ($user?->role === 'admin')
                         <a href="{{ route('admin.dosen.index') }}" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy {{ request()->routeIs('admin.dosen.*') ? 'bg-white/10 text-white' : 'text-slate-200' }}">
                             <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM2.5 21a5.5 5.5 0 0 1 11 0M17 10h4M19 8v4M17 17h4" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4 3 8l9 4 9-4-9-4ZM6.5 10.5v4.25c0 1.2 2.45 2.25 5.5 2.25s5.5-1.05 5.5-2.25V10.5M8.5 21a3.5 3.5 0 0 1 7 0" />
                             </svg>
                             <span>Dosen</span>
                         </a>
 
                         <a href="{{ route('admin.mahasiswa.index') }}" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy {{ request()->routeIs('admin.mahasiswa.*') ? 'bg-white/10 text-white' : 'text-slate-200' }}">
                             <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21a7 7 0 0 1 14 0M6 8h4" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 10.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 21a5.5 5.5 0 0 1 11 0M15 6.5h5a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5M15 10h3M15 13h3" />
                             </svg>
                             <span>Mahasiswa</span>
                         </a>
@@ -82,7 +82,7 @@
 
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-navy {{ request()->routeIs('profile.*') ? 'bg-white/10 text-white' : '' }}">
                         <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4.5 21a7.5 7.5 0 0 1 15 0" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 11.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6.8 18a5.7 5.7 0 0 1 10.4 0" />
                         </svg>
                         <span>Profil</span>
                     </a>

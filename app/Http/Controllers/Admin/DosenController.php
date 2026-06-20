@@ -50,11 +50,13 @@ class DosenController extends Controller
                 'bidang_minat_id' => $validated['bidang_minat_id'],
             ]);
 
-            DosenSlot::create([
-                'dosen_id' => $dosen->id,
-                'angkatan' => $validated['angkatan'],
-                'max_slot' => $validated['max_slot'],
-            ]);
+            foreach ($validated['slots'] as $slot) {
+                DosenSlot::create([
+                    'dosen_id' => $dosen->id,
+                    'angkatan' => $slot['angkatan'],
+                    'max_slot' => $slot['max_slot'],
+                ]);
+            }
         });
 
         return redirect()
@@ -99,13 +101,21 @@ class DosenController extends Controller
                 'bidang_minat_id' => $validated['bidang_minat_id'],
             ]);
 
-            DosenSlot::updateOrCreate(
-                [
-                    'dosen_id' => $dosen->id,
-                    'angkatan' => $validated['angkatan'],
-                ],
-                ['max_slot' => $validated['max_slot']],
-            );
+            $angkatanSlots = collect($validated['slots'])->pluck('angkatan')->all();
+
+            $dosen->dosenSlots()
+                ->whereNotIn('angkatan', $angkatanSlots)
+                ->delete();
+
+            foreach ($validated['slots'] as $slot) {
+                DosenSlot::updateOrCreate(
+                    [
+                        'dosen_id' => $dosen->id,
+                        'angkatan' => $slot['angkatan'],
+                    ],
+                    ['max_slot' => $slot['max_slot']],
+                );
+            }
         });
 
         return redirect()
@@ -153,8 +163,9 @@ class DosenController extends Controller
                 Rule::unique('dosens', 'nip')->ignore($dosen?->id),
             ],
             'bidang_minat_id' => ['required', 'integer', Rule::exists('bidang_minats', 'id')],
-            'angkatan' => ['required', 'integer', 'between:2000,2100'],
-            'max_slot' => ['required', 'integer', 'between:0,255'],
+            'slots' => ['required', 'array', 'min:1'],
+            'slots.*.angkatan' => ['required', 'integer', 'between:2000,2100', 'distinct'],
+            'slots.*.max_slot' => ['required', 'integer', 'between:0,255'],
         ];
     }
 }

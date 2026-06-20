@@ -14,6 +14,30 @@ class AdminDosenTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_admin_can_create_dosen_with_slots_per_angkatan(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $bidangMinat = BidangMinat::create(['nama' => 'Data Mining']);
+
+        $response = $this
+            ->actingAs($admin)
+            ->post(route('admin.dosen.store'), [
+                'name' => 'Dosen Slot',
+                'email' => 'dosen.slot@simbima.test',
+                'password' => 'password',
+                'nip' => '197410011999031001',
+                'bidang_minat_id' => $bidangMinat->id,
+                'slots' => [
+                    ['angkatan' => 2021, 'max_slot' => 10],
+                    ['angkatan' => 2022, 'max_slot' => 12],
+                ],
+            ]);
+
+        $response->assertRedirect(route('admin.dosen.index'));
+        $this->assertDatabaseHas('dosen_slots', ['angkatan' => 2021, 'max_slot' => 10]);
+        $this->assertDatabaseHas('dosen_slots', ['angkatan' => 2022, 'max_slot' => 12]);
+    }
+
     public function test_admin_can_not_delete_dosen_with_bimbingan(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

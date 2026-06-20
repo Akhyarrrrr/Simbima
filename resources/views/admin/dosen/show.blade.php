@@ -38,6 +38,18 @@
                     <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Bidang Minat</dt>
                     <dd class="mt-1 text-sm font-medium text-navy">{{ $dosen->bidangMinat->nama }}</dd>
                 </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate">Slot Per Angkatan</dt>
+                    <dd class="mt-2 flex flex-wrap gap-2">
+                        @forelse ($dosen->dosenSlots->sortByDesc('angkatan') as $slot)
+                            <span class="inline-flex rounded-full bg-gold/10 px-2.5 py-1 text-xs font-semibold text-gold ring-1 ring-gold/30">
+                                {{ $slot->angkatan }}: {{ $slot->max_slot }} slot
+                            </span>
+                        @empty
+                            <span class="text-sm text-slate">Belum ada slot.</span>
+                        @endforelse
+                    </dd>
+                </div>
             </dl>
         </section>
 

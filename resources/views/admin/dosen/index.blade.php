@@ -40,22 +40,20 @@
                     </thead>
                     <tbody class="bg-white">
                         @forelse ($dosens as $dosen)
-                            @php
-                                $latestSlot = $dosen->dosenSlots->sortByDesc('angkatan')->first();
-                            @endphp
-
                             <tr class="border-b border-slate-100 last:border-b-0 hover:bg-paper/60">
                                 <td class="whitespace-nowrap px-6 py-4 font-medium text-navy">{{ $dosen->user->name }}</td>
                                 <td class="whitespace-nowrap px-6 py-4 font-mono text-sm text-slate">{{ $dosen->nip }}</td>
                                 <td class="whitespace-nowrap px-6 py-4 text-slate">{{ $dosen->bidangMinat->nama }}</td>
                                 <td class="whitespace-nowrap px-6 py-4 text-slate">
-                                    @if ($latestSlot)
-                                        <span class="inline-flex rounded-full bg-gold/10 px-2.5 py-1 text-xs font-semibold text-gold ring-1 ring-gold/30">
-                                            {{ $latestSlot->angkatan }}: {{ $latestSlot->max_slot }}
-                                        </span>
-                                    @else
-                                        <span>-</span>
-                                    @endif
+                                    <div class="flex flex-wrap gap-1.5">
+                                        @forelse ($dosen->dosenSlots->sortByDesc('angkatan') as $slot)
+                                            <span class="inline-flex rounded-full bg-gold/10 px-2.5 py-1 text-xs font-semibold text-gold ring-1 ring-gold/30">
+                                                {{ $slot->angkatan }}: {{ $slot->max_slot }}
+                                            </span>
+                                        @empty
+                                            <span>-</span>
+                                        @endforelse
+                                    </div>
                                 </td>
                                 <td class="whitespace-nowrap px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2">

@@ -12,7 +12,7 @@
                 <p class="mt-1 text-sm text-slate">Perbarui profil dosen dan slot pembimbing per angkatan.</p>
             </div>
 
-            @include('admin.dosen.form', ['slot' => $dosen->dosenSlots->first()])
+            @include('admin.dosen.form')
 
             <div class="flex justify-end gap-3 border-t border-slate-200 pt-5">
                 <a href="{{ route('admin.dosen.index') }}" class="inline-flex items-center rounded-md px-4 py-2 text-sm font-semibold text-slate transition-colors hover:text-navy focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">Batal</a>
