@@ -32,8 +32,15 @@
 
         <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <div class="border-b border-gold/30 px-6 py-4">
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate">Detail Beban</p>
-                <h3 class="mt-1 font-display text-lg font-semibold text-navy">Tabel Distribusi Bimbingan</h3>
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate">Detail Beban</p>
+                        <h3 class="mt-1 font-display text-lg font-semibold text-navy">Tabel Distribusi Bimbingan</h3>
+                    </div>
+                    <a href="{{ route('statistik.dosen.export') }}" class="inline-flex items-center justify-center rounded-md border border-navy px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                        Export CSV
+                    </a>
+                </div>
             </div>
 
             <div class="overflow-x-auto">

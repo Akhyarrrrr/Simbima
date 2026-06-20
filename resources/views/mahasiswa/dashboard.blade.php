@@ -205,6 +205,9 @@
                     </div>
 
                     <div class="flex justify-end border-t border-slate-100 pt-5">
+                        <a href="{{ route('bimbingan.show', $bimbingan) }}" class="mr-3 inline-flex h-10 items-center rounded-md border border-navy px-4 text-sm font-semibold text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                            Detail Bimbingan
+                        </a>
                         <button type="submit" class="inline-flex h-10 items-center rounded-md bg-navy px-4 text-sm font-semibold text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
                             Simpan Perubahan
                         </button>

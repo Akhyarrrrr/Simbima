@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\BimbinganController as AdminBimbinganController;
 use App\Http\Controllers\Admin\DosenController as AdminDosenController;
 use App\Http\Controllers\Admin\MahasiswaController as AdminMahasiswaController;
 use App\Http\Controllers\Admin\MahasiswaImportController as AdminMahasiswaImportController;
+use App\Http\Controllers\Admin\UserPasswordController as AdminUserPasswordController;
+use App\Http\Controllers\BimbinganDetailController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Dosen\BimbinganController as DosenBimbinganController;
 use App\Http\Controllers\Dosen\BimbinganStatusController as DosenBimbinganStatusController;
@@ -45,7 +47,9 @@ Route::middleware('auth')->group(function () {
         return back();
     })->name('notifications.mark-all-read');
     Route::post('/bimbingan/{id}/catatan', [CatatanBimbinganController::class, 'store'])->name('bimbingan.catatan.store');
+    Route::get('/bimbingan/{id}', [BimbinganDetailController::class, 'show'])->name('bimbingan.show');
     Route::get('/statistik/dosen', [StatistikDosenController::class, 'index'])->name('statistik.dosen');
+    Route::get('/statistik/dosen/export', [StatistikDosenController::class, 'export'])->name('statistik.dosen.export');
 });
 
 Route::middleware(['auth', EnsureMahasiswa::class])
@@ -76,6 +80,7 @@ Route::middleware(['auth', EnsureAdmin::class])
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::patch('users/{user}/password', [AdminUserPasswordController::class, 'update'])->name('users.password.update');
         Route::patch('bimbingan/{id}/dospem2', [AdminBimbinganController::class, 'updateDospem2'])->name('bimbingan.dospem2.update');
         Route::resource('dosen', AdminDosenController::class);
         Route::get('mahasiswa/import', [AdminMahasiswaImportController::class, 'create'])->name('mahasiswa.import.create');

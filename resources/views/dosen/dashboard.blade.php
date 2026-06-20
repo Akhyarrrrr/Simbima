@@ -134,6 +134,9 @@
                                     <button type="button" x-on:click="open = !open" class="inline-flex items-center rounded-md border border-navy px-3 py-1.5 text-sm font-semibold text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
                                         <span x-text="open ? 'Tutup Detail' : 'Buka Detail'"></span>
                                     </button>
+                                    <a href="{{ route('bimbingan.show', $bimbingan) }}" class="inline-flex items-center rounded-md border border-navy px-3 py-1.5 text-sm font-semibold text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                                        Halaman Detail
+                                    </a>
 
                                     @if ($isDospem1 && $bimbingan->boleh_sidang)
                                         <form method="POST" action="{{ route('dosen.bimbingan.selesai', $bimbingan) }}" onsubmit="return confirm('Bimbingan akan ditandai selesai karena mahasiswa sudah boleh sidang. Lanjutkan?')">

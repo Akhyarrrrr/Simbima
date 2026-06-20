@@ -88,6 +88,33 @@
             </section>
         @endif
 
+        <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="mb-5 border-b border-gold/30 pb-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate">Keamanan</p>
+                <h3 class="mt-1 font-display text-lg font-semibold text-navy">Reset Password</h3>
+                <p class="mt-1 text-sm text-slate">Gunakan saat mahasiswa lupa password. Bagikan password baru secara langsung kepada mahasiswa.</p>
+            </div>
+
+            <form method="POST" action="{{ route('admin.users.password.update', $mahasiswa->user) }}" class="grid gap-4 sm:grid-cols-2">
+                @csrf
+                @method('PATCH')
+
+                <div>
+                    <x-input-label for="password" value="Password Baru" class="text-xs font-semibold uppercase tracking-wide text-slate" />
+                    <x-text-input id="password" name="password" type="password" class="mt-1 block w-full rounded-md border-slate-300 text-sm text-navy shadow-sm focus:border-navy focus:ring-navy" required autocomplete="new-password" />
+                </div>
+                <div>
+                    <x-input-label for="password_confirmation" value="Konfirmasi Password" class="text-xs font-semibold uppercase tracking-wide text-slate" />
+                    <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full rounded-md border-slate-300 text-sm text-navy shadow-sm focus:border-navy focus:ring-navy" required autocomplete="new-password" />
+                </div>
+                <div class="sm:col-span-2 flex justify-end">
+                    <button type="submit" class="inline-flex h-10 items-center rounded-md bg-navy px-4 text-sm font-semibold text-white transition-colors hover:bg-navy/90 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2">
+                        Reset Password
+                    </button>
+                </div>
+            </form>
+        </section>
+
         <div>
             <a class="inline-flex items-center rounded-md border border-navy px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-navy hover:text-white focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2" href="{{ route('admin.mahasiswa.index') }}">
                 Kembali

@@ -31,8 +31,10 @@
             $recentNotifications = $user?->notifications()->latest()->limit(10)->get() ?? collect();
         @endphp
 
-        <div class="min-h-screen bg-paper text-navy">
-            <aside class="fixed inset-y-0 left-0 z-30 flex w-[260px] flex-col bg-navy text-white shadow-xl">
+        <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-paper text-navy">
+            <div x-show="sidebarOpen" x-cloak x-on:click="sidebarOpen = false" class="fixed inset-0 z-20 bg-navy/40 lg:hidden"></div>
+
+            <aside class="fixed inset-y-0 left-0 z-30 flex w-[260px] flex-col bg-navy text-white shadow-xl transition-transform duration-300 lg:translate-x-0" x-bind:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
                 <div class="py-8 border-b border-white/10 px-7">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-2xl font-semibold tracking-wide text-white font-display">
                         <span class="flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full shrink-0" aria-hidden="true">
@@ -153,8 +155,18 @@
                 </div>
             </aside>
 
-            <main class="min-h-screen bg-paper pl-[260px]">
-                <div class="px-8 py-8 animate-simbima-fade-up">
+            <main class="min-h-screen bg-paper lg:pl-[260px]">
+                <header class="sticky top-0 z-10 flex items-center justify-between border-b border-gold/30 bg-paper/95 px-4 py-3 backdrop-blur lg:hidden">
+                    <button type="button" x-on:click="sidebarOpen = true" class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-navy text-navy focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2" aria-label="Buka menu">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+                        </svg>
+                    </button>
+                    <a href="{{ route('dashboard') }}" class="font-display text-lg font-semibold tracking-wide text-navy">SIMBIMA</a>
+                    <span class="h-10 w-10"></span>
+                </header>
+
+                <div class="px-4 py-6 animate-simbima-fade-up sm:px-6 lg:px-8 lg:py-8">
                     <div class="pb-5 mb-8 border-b border-gold/30">
                         <p class="font-sans text-xs font-semibold uppercase tracking-[0.22em] text-slate">
                             {{ $eyebrow }}
