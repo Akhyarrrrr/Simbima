@@ -17,6 +17,149 @@
 }
 
 @layer utilities {
+    .home-grid {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+            linear-gradient(90deg, rgb(27 42 74 / 0.055) 1px, transparent 1px),
+            linear-gradient(0deg, rgb(27 42 74 / 0.055) 1px, transparent 1px),
+            linear-gradient(135deg, rgb(45 106 79 / 0.12), transparent 42%, rgb(201 162 39 / 0.12));
+        background-size: 54px 54px, 54px 54px, 100% 100%;
+        mask-image: linear-gradient(to bottom, black 0%, black 72%, transparent 100%);
+    }
+
+    .home-feature {
+        min-height: 220px;
+        border: 1px solid rgb(27 42 74 / 0.1);
+        border-radius: 2rem;
+        background: rgb(255 255 255 / 0.78);
+        padding: 1.5rem;
+        box-shadow: 0 24px 70px rgb(27 42 74 / 0.08);
+        transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    }
+
+    .home-feature:hover {
+        transform: translateY(-4px);
+        border-color: rgb(45 106 79 / 0.26);
+        box-shadow: 0 28px 80px rgb(27 42 74 / 0.12);
+    }
+
+    .home-feature span {
+        display: inline-flex;
+        margin-bottom: 1.25rem;
+        border-radius: 999px;
+        background: rgb(45 106 79 / 0.1);
+        padding: 0.45rem 0.75rem;
+        color: theme('colors.forest');
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .home-feature h3 {
+        max-width: 24rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+    }
+
+    .home-feature p {
+        margin-top: 1rem;
+        max-width: 34rem;
+        color: theme('colors.slate.DEFAULT');
+        line-height: 1.75;
+    }
+
+    .home-feature-dark {
+        background: theme('colors.navy');
+        color: white;
+    }
+
+    .home-feature-dark span,
+    .home-feature-forest span {
+        background: rgb(255 255 255 / 0.12);
+        color: white;
+    }
+
+    .home-feature-dark p,
+    .home-feature-forest p {
+        color: rgb(255 255 255 / 0.72);
+    }
+
+    .home-feature-gold {
+        background: #f5e7b8;
+    }
+
+    .home-feature-forest {
+        background: theme('colors.forest');
+        color: white;
+    }
+
+    @keyframes home-rise {
+        from {
+            opacity: 0;
+            transform: translateY(18px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes home-float {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes home-card {
+        from {
+            opacity: 0;
+            transform: translateY(14px) scale(0.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes home-progress {
+        from {
+            width: 0;
+        }
+
+        to {
+            width: 78%;
+        }
+    }
+
+    .animate-home-rise {
+        animation: home-rise 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation-delay: var(--delay, 0ms);
+    }
+
+    .home-showcase > div:first-child {
+        animation: home-float 6800ms ease-in-out infinite;
+    }
+
+    .home-role-card {
+        animation: home-card 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation-delay: var(--delay, 0ms);
+    }
+
+    .home-progress {
+        animation: home-progress 1000ms cubic-bezier(0.16, 1, 0.3, 1) 520ms both;
+    }
+
     @keyframes simbima-fade-up {
         from {
             opacity: 0;
@@ -50,9 +193,17 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+        .animate-home-rise,
+        .home-showcase > div:first-child,
+        .home-role-card,
+        .home-progress,
         .animate-simbima-fade-up,
         .animate-simbima-soft-scale {
             animation: none;
+        }
+
+        .home-progress {
+            width: 78%;
         }
     }
 }
