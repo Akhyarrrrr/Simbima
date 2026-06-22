@@ -59,6 +59,7 @@
 
     .home-feature h3 {
         max-width: 24rem;
+        font-family: theme('fontFamily.display');
         font-size: 1.35rem;
         font-weight: 700;
         line-height: 1.2;
