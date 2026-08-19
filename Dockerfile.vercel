@@ -1,0 +1,39 @@
+FROM php:8.4-cli
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        git \
+        libpng-dev \
+        libpq-dev \
+        libsqlite3-dev \
+        libzip-dev \
+        unzip \
+    && docker-php-ext-install bcmath gd pdo_mysql pdo_pgsql pdo_sqlite zip \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=node:20 /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:20 /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+
+WORKDIR /var/www/html
+
+COPY . .
+
+RUN rm -f bootstrap/cache/*.php \
+    && composer install --no-dev --optimize-autoloader --no-interaction \
+    && npm ci \
+    && npm run build \
+    && rm -rf node_modules \
+    && chmod +x docker/start-vercel.sh
+
+ENV LOG_CHANNEL=stderr \
+    SESSION_DRIVER=database \
+    CACHE_STORE=database \
+    VIEW_COMPILED_PATH=/tmp/simbima/views
+
+EXPOSE 3000
+
+CMD ["/var/www/html/docker/start-vercel.sh"]

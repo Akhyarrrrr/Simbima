@@ -7,6 +7,7 @@ use App\Models\BidangMinat;
 use App\Models\Mahasiswa;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -102,5 +103,26 @@ class MahasiswaImportTest extends TestCase
         $this->assertSame(0, $import->successCount);
         $this->assertCount(3, $import->skipped);
         $this->assertDatabaseMissing('users', ['email' => 'duplicate.nim@simbima.test']);
+    }
+
+    public function test_admin_can_download_cached_credentials_once(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $token = str_repeat('a', 40);
+        $csv = "nama,email,nim,password\nDemo,demo@simbima.test,210001,temporary-value\n";
+
+        Cache::put('mahasiswa-import-credentials:'.$token, $csv, now()->addMinutes(10));
+
+        $download = $this
+            ->actingAs($admin)
+            ->get(route('admin.mahasiswa.import.download', $token));
+
+        $download->assertOk()->assertDownload('mahasiswa_credentials.csv');
+        $this->assertSame($csv, $download->streamedContent());
+
+        $this
+            ->actingAs($admin)
+            ->get(route('admin.mahasiswa.import.download', $token))
+            ->assertNotFound();
     }
 }

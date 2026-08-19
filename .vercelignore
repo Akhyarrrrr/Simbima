@@ -1,9 +1,7 @@
-.git
-.github
 .env*
-!.env.example
-node_modules
 vendor
+node_modules
+bootstrap/cache/*.php
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*

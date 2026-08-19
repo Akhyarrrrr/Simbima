@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Imports\MahasiswaImport;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MahasiswaImportController extends Controller
 {
@@ -31,7 +31,7 @@ class MahasiswaImportController extends Controller
         $credentialsFilename = null;
 
         if ($import->credentials !== []) {
-            $credentialsFilename = $this->writeCredentialsCsv($import->credentials);
+            $credentialsFilename = $this->cacheCredentialsCsv($import->credentials);
         }
 
         return view('admin.mahasiswa.import', [
@@ -41,30 +41,23 @@ class MahasiswaImportController extends Controller
         ]);
     }
 
-    public function downloadCredentials(string $filename): BinaryFileResponse
+    public function downloadCredentials(string $filename): StreamedResponse
     {
-        $filename = basename($filename);
-        $path = storage_path('app/temp/'.$filename);
+        $csv = Cache::pull('mahasiswa-import-credentials:'.$filename);
 
-        abort_unless(File::exists($path), 404);
+        abort_unless(is_string($csv), 404);
 
-        return response()
-            ->download($path, 'mahasiswa_credentials.csv', ['Content-Type' => 'text/csv'])
-            ->deleteFileAfterSend();
+        return response()->streamDownload(function () use ($csv) {
+            echo $csv;
+        }, 'mahasiswa_credentials.csv', ['Content-Type' => 'text/csv']);
     }
 
     /**
      * @param  array<int, array{nama: string, email: string, nim: string, plain_password: string}>  $credentials
      */
-    private function writeCredentialsCsv(array $credentials): string
+    private function cacheCredentialsCsv(array $credentials): string
     {
-        $directory = storage_path('app/temp');
-        File::ensureDirectoryExists($directory);
-
-        $filename = 'mahasiswa_credentials_'.now()->format('YmdHis').'_'.Str::random(8).'.csv';
-        $path = $directory.'/'.$filename;
-
-        $handle = fopen($path, 'w');
+        $handle = fopen('php://temp', 'w+');
         fputcsv($handle, ['nama', 'email', 'nim', 'password']);
 
         foreach ($credentials as $credential) {
@@ -76,8 +69,13 @@ class MahasiswaImportController extends Controller
             ]);
         }
 
+        rewind($handle);
+        $csv = (string) stream_get_contents($handle);
         fclose($handle);
 
-        return $filename;
+        $token = Str::random(40);
+        Cache::put('mahasiswa-import-credentials:'.$token, $csv, now()->addMinutes(10));
+
+        return $token;
     }
 }
