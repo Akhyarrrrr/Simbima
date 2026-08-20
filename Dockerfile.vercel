@@ -27,6 +27,8 @@ RUN rm -f bootstrap/cache/*.php \
     && npm ci \
     && npm run build \
     && rm -rf node_modules \
+    && tar -C vendor -czf /opt/vendor.tar.gz . \
+    && rm -rf vendor \
     && chmod +x docker/start-vercel.sh
 
 ENV LOG_CHANNEL=stderr \
