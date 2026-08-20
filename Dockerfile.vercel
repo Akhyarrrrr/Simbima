@@ -27,7 +27,7 @@ RUN rm -f bootstrap/cache/*.php \
     && npm ci \
     && npm run build \
     && rm -rf node_modules \
-    && tar -C vendor -czf /opt/vendor.tar.gz . \
+    && php -d phar.readonly=0 -r '$phar = new Phar("/opt/simbima.phar"); $phar->buildFromDirectory("/var/www/html"); $phar->setStub("<?php Phar::mapPhar(\"simbima.phar\"); require \"phar://simbima.phar/public/index.php\"; __HALT_COMPILER();");' \
     && rm -rf vendor \
     && chmod +x docker/start-vercel.sh
 
