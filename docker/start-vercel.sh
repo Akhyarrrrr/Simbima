@@ -1,11 +1,9 @@
 #!/usr/bin/env sh
 set -eu
 
-cd /var/www/html
-
 mkdir -p "${VIEW_COMPILED_PATH:-/tmp/simbima/views}"
 export APP_CONFIG_CACHE=/tmp/simbima/config.php
-rm -f "$APP_CONFIG_CACHE" bootstrap/cache/config.php
+rm -f "$APP_CONFIG_CACHE"
 
 export DB_CONNECTION=pgsql
 export DB_PORT=5432
