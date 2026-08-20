@@ -1,4 +1,4 @@
-FROM php:8.4-cli AS builder
+FROM php:8.4-cli
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -19,6 +19,7 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
     && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 WORKDIR /var/www/html
+
 COPY . .
 
 RUN rm -f bootstrap/cache/*.php \
@@ -26,23 +27,7 @@ RUN rm -f bootstrap/cache/*.php \
     && npm ci \
     && npm run build \
     && rm -rf node_modules \
-    && php -d phar.readonly=0 -r '$phar = new Phar("/opt/simbima.phar"); $phar->buildFromDirectory("/var/www/html"); $phar->setStub("<?php Phar::mapPhar(\"simbima.phar\"); require \"phar://simbima.phar/public/index.php\"; __HALT_COMPILER();");' \
-    && rm -rf vendor \
     && chmod +x docker/start-vercel.sh
-
-FROM php:8.4-cli
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends libpng16-16t64 libpq5 libsqlite3-0 libzip5 \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
-COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
-COPY --from=builder /var/www/html/public /var/www/html/public
-COPY --from=builder /var/www/html/docker/start-vercel.sh /usr/local/bin/start-vercel
-COPY --from=builder /opt/simbima.phar /opt/simbima.phar
-
-WORKDIR /var/www/html
 
 ENV LOG_CHANNEL=stderr \
     SESSION_DRIVER=database \
@@ -51,4 +36,4 @@ ENV LOG_CHANNEL=stderr \
 
 EXPOSE 3000
 
-CMD ["/usr/local/bin/start-vercel"]
+CMD ["/var/www/html/docker/start-vercel.sh"]

@@ -3,7 +3,7 @@ set -eu
 
 mkdir -p "${VIEW_COMPILED_PATH:-/tmp/simbima/views}"
 export APP_CONFIG_CACHE=/tmp/simbima/config.php
-rm -f "$APP_CONFIG_CACHE"
+rm -f "$APP_CONFIG_CACHE" bootstrap/cache/config.php
 
 export DB_CONNECTION=pgsql
 export DB_PORT=5432
@@ -16,4 +16,4 @@ if [ -n "${MYSQL_CA_CERT_BASE64:-}" ]; then
     export MYSQL_ATTR_SSL_CA=/tmp/aiven-ca.pem
 fi
 
-exec php -S 0.0.0.0:"${PORT:-3000}" -t /var/www/html/public /opt/simbima.phar
+exec php artisan serve --host=0.0.0.0 --port="${PORT:-3000}"
